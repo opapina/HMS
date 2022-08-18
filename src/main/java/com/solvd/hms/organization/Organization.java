@@ -1,6 +1,6 @@
 package com.solvd.hms.organization;
 
-import base.Address;
+import com.solvd.hms.base.Address;
 
 import java.util.Objects;
 

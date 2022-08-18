@@ -1,15 +1,15 @@
 package com.solvd.hms.organization;
 
-import base.Address;
-import client.Client;
-import exception.InvalidListException;
-import order.Order;
+import com.solvd.hms.base.Address;
+import com.solvd.hms.client.Client;
+import com.solvd.hms.exception.InvalidListException;
+import com.solvd.hms.order.Order;
+import com.solvd.hms.resources.*;
+import com.solvd.hms.service.Service;
+import com.solvd.hms.vehicle.Car;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import resources.Equipment;
-import resources.Worker;
-import service.Service;
-import vehicle.Car;
 
 import java.util.List;
 import java.util.Objects;

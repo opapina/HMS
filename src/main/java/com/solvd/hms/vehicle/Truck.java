@@ -1,6 +1,6 @@
 package com.solvd.hms.vehicle;
 
-import base.Engine;
+import com.solvd.hms.base.Engine;
 
 import java.util.Objects;
 

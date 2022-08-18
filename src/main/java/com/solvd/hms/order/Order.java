@@ -1,9 +1,9 @@
 package com.solvd.hms.order;
 
-import base.Address;
-import resources.Equipment;
-import resources.Worker;
-import service.Service;
+import com.solvd.hms.base.Address;
+import com.solvd.hms.resources.Equipment;
+import com.solvd.hms.resources.Worker;
+import com.solvd.hms.service.Service;
 
 import java.util.List;
 import java.util.Objects;

@@ -1,6 +1,6 @@
 package com.solvd.hms.vehicle;
 
-import exception.InvalidCountWheelException;
+import com.solvd.hms.exception.InvalidCountWheelException;
 
 import java.util.Objects;
 

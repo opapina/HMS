@@ -1,10 +1,10 @@
 package com.solvd.hms.resources;
 
-import base.*;
-import exception.ExperienceInvalidException;
+import com.solvd.hms.base.*;
+import com.solvd.hms.exception.ExperienceInvalidException;
+import com.solvd.hms.vehicle.Vehicle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import vehicle.Vehicle;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

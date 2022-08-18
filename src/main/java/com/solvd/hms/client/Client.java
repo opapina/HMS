@@ -1,6 +1,6 @@
 package com.solvd.hms.client;
 
-import base.*;
+import com.solvd.hms.base.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -89,5 +89,9 @@ public class Client<A, V> extends Human implements IDrive, IDo {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), apartments, vehicles, getChildren());
+    }
+
+    public String getLastName() {
+        return null;
     }
 }
