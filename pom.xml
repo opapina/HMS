@@ -6,11 +6,13 @@
 
     <groupId>com.solvd</groupId>
     <artifactId>hms</artifactId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>9.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
         <apache-logger-version>2.18.0</apache-logger-version>
+        <apache-commons-lang3-version>3.12.0</apache-commons-lang3-version>
+        <apache-commons-io-version>2.11.0</apache-commons-io-version>
     </properties>
 
     <dependencies>
@@ -25,6 +27,18 @@
             <artifactId>log4j-api</artifactId>
             <version>${apache-logger-version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache-commons-lang3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${apache-commons-io-version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -39,7 +53,14 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>/Users/user/IdeaProject/hms/scr/resources</directory>
+            </resource>
+        </resources>
     </build>
+
 </project>
 
 

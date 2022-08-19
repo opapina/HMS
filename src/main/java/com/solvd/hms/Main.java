@@ -7,6 +7,9 @@ import com.solvd.hms.base.IDo;
 import com.solvd.hms.base.IMove;
 import com.solvd.hms.exception.ExperienceInvalidException;
 import com.solvd.hms.order.Order;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.solvd.hms.organization.HMS;
@@ -19,15 +22,34 @@ import com.solvd.hms.service.Service;
 import com.solvd.hms.vehicle.Truck;
 import com.solvd.hms.vehicle.Car;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Main {
 
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
+//        FileWriter fw = new FileWriter( "Mysterious.rtf" );
+//        fw.close();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        FileReader fr1 = new FileReader( "Mockingjay.txt" );
+        String name;
+        int c;
+        System.out.println("Print File Files.txt? y/n");
+        name = br.readLine();
+        if(name.equals("y"))
+            while ((c = fr1.read()) != -1) System.out.println((char) c);
+        fr1.close();
+
         Truck truck1 = new Truck("TGL", "MAN");
         Client<Address, Car> mrJon = new Client<>("Alex", "Jon", LocalDate.of(1999, 3, 6), List.of(new Apartment(2, 55.25, new Address("Frunze", 78, 24))));
         Client<Address, Car> mrKozlov = new Client<>("Sasha", "Kozlov", LocalDate.of(2005, 6, 8), List.of(new Apartment(1, 35, new Address("Kozlova", 25, 10))));
