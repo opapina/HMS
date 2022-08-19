@@ -1,19 +1,23 @@
 package com.solvd.hms;
 
-import com.solvd.hms.base.*;
 import com.solvd.hms.client.Client;
+import com.solvd.hms.base.Address;
+import com.solvd.hms.base.Apartment;
+import com.solvd.hms.base.IDo;
+import com.solvd.hms.base.IMove;
 import com.solvd.hms.exception.ExperienceInvalidException;
 import com.solvd.hms.order.Order;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import com.solvd.hms.organization.HMS;
-import com.solvd.hms.resources.ElectroEquipment;
 import com.solvd.hms.resources.Equipment;
+import com.solvd.hms.resources.ElectroEquipment;
 import com.solvd.hms.resources.Worker;
 import com.solvd.hms.service.Cleaning;
 import com.solvd.hms.service.GarbageRemoval;
 import com.solvd.hms.service.Service;
-import com.solvd.hms.vehicle.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.solvd.hms.vehicle.Truck;
+import com.solvd.hms.vehicle.Car;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

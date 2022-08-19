@@ -90,8 +90,4 @@ public class Client<A, V> extends Human implements IDrive, IDo {
     public int hashCode() {
         return Objects.hash(super.hashCode(), apartments, vehicles, getChildren());
     }
-
-    public String getLastName() {
-        return null;
-    }
 }

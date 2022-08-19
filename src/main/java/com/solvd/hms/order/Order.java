@@ -5,8 +5,8 @@ import com.solvd.hms.resources.Equipment;
 import com.solvd.hms.resources.Worker;
 import com.solvd.hms.service.Service;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.List;
 
 public class Order<E extends Equipment> {
 
