@@ -4,12 +4,12 @@ import com.solvd.hms.base.Address;
 import com.solvd.hms.client.Client;
 import com.solvd.hms.exception.InvalidListException;
 import com.solvd.hms.order.Order;
-import com.solvd.hms.resources.*;
-import com.solvd.hms.service.Service;
-import com.solvd.hms.vehicle.Car;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.solvd.hms.resources.Equipment;
+import com.solvd.hms.resources.Worker;
+import com.solvd.hms.service.Service;
+import com.solvd.hms.vehicle.Car;
 
 import java.util.List;
 import java.util.Objects;

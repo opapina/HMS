@@ -2,9 +2,9 @@ package com.solvd.hms.resources;
 
 import com.solvd.hms.base.*;
 import com.solvd.hms.exception.ExperienceInvalidException;
-import com.solvd.hms.vehicle.Vehicle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.solvd.hms.vehicle.Vehicle;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
