@@ -55,7 +55,7 @@
 
         <resources>
             <resource>
-                <directory>C:\Users\Olga\hms\src\main\resources\</directory>
+                <directory>C:\Users\Olga\hms\src\main\</directory>
             </resource>
         </resources>
     </build>
