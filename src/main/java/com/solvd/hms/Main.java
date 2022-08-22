@@ -33,22 +33,25 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.solvd.hms.HMSUtils.readTxtFile;
+
 public class Main {
 
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception{
 //        FileWriter fw = new FileWriter( "Mysterious.rtf" );
 //        fw.close();
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        FileReader fr1 = new FileReader( "Mockingjay.txt" );
-        String name;
-        int c;
-        System.out.println("Print File Files.txt? y/n");
-        name = br.readLine();
-        if(name.equals("y"))
-            while ((c = fr1.read()) != -1) System.out.println((char) c);
-        fr1.close();
+//        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//        FileReader fr1 = new FileReader( "C:\Users\Olga\hms\src\main\resources\Mockingjay.txt" );
+//        String name;
+//        int c;
+//        System.out.println("Print File Files.txt? y/n");
+//        name = br.readLine();
+//        if(name.equals("y"))
+//            while ((c = fr1.read()) != -1) System.out.println((char) c);
+//        fr1.close();
+
 
         Truck truck1 = new Truck("TGL", "MAN");
         Client<Address, Car> mrJon = new Client<>("Alex", "Jon", LocalDate.of(1999, 3, 6), List.of(new Apartment(2, 55.25, new Address("Frunze", 78, 24))));
@@ -88,7 +91,7 @@ public class Main {
         for (Worker worker : workers) {
             LOGGER.info(worker.getFirstName());
         }
-
+        readTxtFile("C:\\Users\\Olga\\hms\\src\\main\\resources\\Mockingjay.txt");
         Address pervomaiskay = new Address("Pervomaiskay");
         Address zaharova = new Address("Zaharova");
         Address pulihova = new Address("Pulihova");

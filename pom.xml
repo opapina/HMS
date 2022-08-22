@@ -27,7 +27,6 @@
             <artifactId>log4j-api</artifactId>
             <version>${apache-logger-version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -56,7 +55,7 @@
 
         <resources>
             <resource>
-                <directory>/Users/user/IdeaProject/hms/scr/resources</directory>
+                <directory>C:\Users\Olga\hms\src\main\resources\</directory>
             </resource>
         </resources>
     </build>
