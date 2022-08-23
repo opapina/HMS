@@ -16,10 +16,12 @@ import com.solvd.hms.resources.Worker;
 import com.solvd.hms.service.Cleaning;
 import com.solvd.hms.service.GarbageRemoval;
 import com.solvd.hms.service.Service;
-import com.solvd.hms.vehicle.Truck;
-import com.solvd.hms.vehicle.Car;
+import com.solvd.hms.vehicle.*;
+
+import javax.swing.plaf.FontUIResource;
 
 import static com.solvd.hms.HMSUtils.readTxtFile;
+import static com.solvd.hms.HMSUtils.countSortDuplicate;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
@@ -32,7 +34,6 @@ public class Main {
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
-        Truck truck1 = new Truck("TGL", "MAN");
         Client<Address, Car> mrJon = new Client<>("Alex", "Jon", LocalDate.of(1999, 3, 6), List.of(new Apartment(2, 55.25, new Address("Frunze", 78, 24))));
         Client<Address, Car> mrKozlov = new Client<>("Sasha", "Kozlov", LocalDate.of(2005, 6, 8), List.of(new Apartment(1, 35, new Address("Kozlova", 25, 10))));
         Client<Address, Car> mrPupsik = new Client<>("Ivan", "Pupsik", LocalDate.of(2002, 12, 21), List.of(new Apartment(3, 40, new Address("Zaharova", 40, 21))));
@@ -71,10 +72,11 @@ public class Main {
             LOGGER.info(worker.getFirstName());
         }
 
-        //     String myHomeDir =  System.getProperty("user.home");
+//        String myHomeDir =  System.getProperty("user.home");
         Path pathToResource = Paths.get("src", "main", "resources", "Mockingjay.txt");
 
-        readTxtFile(pathToResource);
+        List<String> allWords = readTxtFile(pathToResource);
+        countSortDuplicate(allWords);
 
         Address pervomaiskay = new Address("Pervomaiskay");
         Address zaharova = new Address("Zaharova");
@@ -144,6 +146,21 @@ public class Main {
         HMSUtils.doSmth(iDo2);
 
         HMSUtils.move(iMove2);
+
+        Truck truck1 = new Truck("TGL", "MAN", Vehicle.WheelsCount.ONE);
+        Truck truck2 = new Truck("2705", "KAMAZ", Vehicle.WheelsCount.FOUR);
+        switch (truck1.getWheelsCount()) {
+            case ONE:
+            case TWO:
+            case THREE:
+                LOGGER.info("Truck 1 is broken");
+                break;
+            case FOUR:
+                LOGGER.info("Truck 1 is worked right");
+        }
+        if (!(truck2.getWheelsCount().getCount()==4)) {
+            LOGGER.info("Truck 2 is broken");
+        } else LOGGER.info("Truck 2 is worked right");
 
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
 

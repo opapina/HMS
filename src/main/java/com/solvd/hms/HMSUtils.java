@@ -6,6 +6,8 @@ import com.solvd.hms.organization.HMS;
 import com.solvd.hms.resources.Worker;
 import com.solvd.hms.service.Service;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,11 +71,11 @@ public class HMSUtils {
         iWork.operate();
     }
 
-    public static void readTxtFile(Path fileName) {
-
+    public static List<String> readTxtFile(Path fileName) {
+        List<String> allWords = null;
         try {
             List<String> lines = Files.readAllLines(fileName, StandardCharsets.UTF_8);
-            List<String> allWords = new ArrayList<>();
+            allWords = new ArrayList<>();
             for (String line : lines) {
                 String[] words = line.split("\\W+");
                 for (String word : words) {
@@ -83,18 +85,41 @@ public class HMSUtils {
                 }
             }
 
-            Set<String> uniqueWords = new HashSet<>(allWords);
-            int count1 = 0;
-            for (String word : uniqueWords) {
-                int count = Collections.frequency(allWords, word);
-                if (count > 1) {
-                    System.out.println(word + "  " + count);
-                } else count1++;
-            }
-            int duplicateCount = allWords.size() - uniqueWords.size();
-            System.out.println(duplicateCount);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return allWords;
+    }
+
+    public static void countSortDuplicate(List<String> words) {
+        HashMap<String, Integer> mapWords = new HashMap<>();
+        Set<String> uniqueWords = new HashSet<>(words);
+        int count1 = 0;
+        for (String word : uniqueWords) {
+            int count = Collections.frequency(words, word);
+            if (count > 1) {
+                mapWords.put(word, count);
+            } else count1++;
+        }
+        int duplicateCount = words.size() - uniqueWords.size();
+        System.out.println(duplicateCount);
+
+        mapWords.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).forEach(System.out::println);
+
+//            try (FileWriter writer = new FileWriter("sortedDuplicate.txt", false)) {
+//                // запись всей строки
+//                String text = mapWords.toString();
+//                writer.write(text);
+//                // запись по символам
+//                writer.append('\n');
+//                writer.append('E');
+//
+//                writer.flush();
+//            } catch (IOException ex) {
+//
+//                System.out.println(ex.getMessage());
+//            }
+//        }
+
     }
 }

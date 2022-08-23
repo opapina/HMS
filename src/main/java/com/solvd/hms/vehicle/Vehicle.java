@@ -1,18 +1,36 @@
 package com.solvd.hms.vehicle;
 
-import com.solvd.hms.exception.InvalidCountWheelException;
-
 import java.util.Objects;
 
 public abstract class Vehicle {
 
     private String model;
     private String brand;
-    private Integer wheelsCount;
+    private WheelsCount wheelsCount;
+
+    public enum WheelsCount {
+        ONE(1), TWO(2), THREE(3), FOUR(4);
+
+        private final Integer count;
+
+        WheelsCount(Integer count) {
+            this.count = count;
+        }
+
+        public Integer getCount() {
+            return count;
+        }
+    }
 
     public Vehicle(String model, String brand) {
         this.model = model;
         this.brand = brand;
+    }
+
+    public Vehicle(String model, String brand, WheelsCount wheelsCount) {
+        this.model = model;
+        this.brand = brand;
+        this.wheelsCount = wheelsCount;
     }
 
     public String getModel() {
@@ -31,15 +49,12 @@ public abstract class Vehicle {
         this.brand = brand;
     }
 
-    public Integer getWheelsCount() {
-        return wheelsCount;
+    public void setWheelsCount(WheelsCount wheelsCount) {
+        this.wheelsCount = wheelsCount;
     }
 
-    public void setWheelsCount(Integer wheelsCount) {
-        if (wheelsCount == 0) {
-            throw new InvalidCountWheelException("Vehicle should have wheels! Input number from 1 to 4:");
-        }
-        this.wheelsCount = wheelsCount;
+    public WheelsCount getWheelsCount() {
+        return wheelsCount;
     }
 
     @Override
