@@ -10,14 +10,14 @@ public abstract class Service {
     public enum Type {
         CLEANING("Cleaning"), GARBAGEREMOVAL("GarbageRemoval"), RENOVATIONOFPREMISSES("RenovationOfPremises"), REPAIRINOUTLETPIPES("RepairInOutLetPipes"), REPAIRINOUTLETWIRES("RepairInOutLetWires");
 
-        private final String type;
+        private final String displayName;
 
-        Type(String type) {
-            this.type = type;
+        Type(String displayName) {
+            this.displayName = displayName;
         }
 
-        public String getType() {
-            return type;
+        public String getDisplayName() {
+            return displayName;
         }
     }
 

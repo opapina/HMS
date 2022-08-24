@@ -18,12 +18,11 @@ import com.solvd.hms.service.GarbageRemoval;
 import com.solvd.hms.service.Service;
 import com.solvd.hms.vehicle.*;
 
-import static com.solvd.hms.HMSUtils.readTxtFile;
 import static com.solvd.hms.HMSUtils.countSortDuplicate;
+import static com.solvd.hms.HMSUtils.readTxtFile;
 
+import java.io.File;
 import java.math.BigDecimal;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -173,8 +172,9 @@ public class Main {
                 HMSUtils.doSmth(welderVanya);
         }
 
-        Path pathToResource = Paths.get("src", "main", "resources", "Mockingjay.txt");
-        List<String> allWords = readTxtFile(pathToResource);
+        ClassLoader classLoader = TheClassName.class.getClassLoader();
+        File fileName = new File(Objects.requireNonNull(classLoader.getResource("Mockingjay.txt")).getFile());
+        List<String> allWords = readTxtFile(fileName);
         countSortDuplicate(allWords);
 
         Truck truck1 = new Truck("TGL", "MAN", Vehicle.WheelsCount.ONE);

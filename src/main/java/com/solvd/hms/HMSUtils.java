@@ -8,9 +8,9 @@ import com.solvd.hms.service.Service;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -76,27 +76,26 @@ public class HMSUtils {
         iWork.operate();
     }
 
-    public static List<String> readTxtFile(Path fileName) {
+    public static List<String> readTxtFile(File fileName) {
         List<String> allWords = null;
         try {
-            List<String> lines = Files.readAllLines(fileName, StandardCharsets.UTF_8);
+            List<String> lines = FileUtils.readLines(fileName, StandardCharsets.UTF_8);
             allWords = new ArrayList<>();
             for (String line : lines) {
-                String[] words = line.split("\\W+");
+                String[] words = StringUtils.split(line, "[ ,?:\\.]");
                 for (String word : words) {
                     if (word.length() > 0) {
                         allWords.add(word);
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return allWords;
     }
 
-    public static void countSortDuplicate(List<String> words) {
+    public static <e> void countSortDuplicate(List<String> words) throws IOException {
         HashMap<String, Integer> mapWords = new HashMap<>();
         Set<String> uniqueWords = new HashSet<>(words);
         int count1 = 0;
@@ -111,18 +110,19 @@ public class HMSUtils {
         LOGGER.info("count of duplicate words " + duplicateCount);
 
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(mapWords.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
+        entries.sort(new Comparator<Map.Entry<String, Integer>>() {
             public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b) {
                 return Integer.compare(b.getValue(), a.getValue());
             }
         });
 
-        try (FileWriter writer = new FileWriter("sortedDuplicate.txt", false)) {
-            for (Map.Entry<String, Integer> e : entries) {
-                writer.write(e.getKey() + " " + e.getValue() + "\n");
+        try {
+            for(Map.Entry<String, Integer> e : entries) {
+                File writer = new File("sortedDuplicate.txt");
+                FileUtils.write(writer, e.getKey() + " " + e.getValue() + "\n", true);
             }
-        } catch (IOException ex) {
-            LOGGER.info(ex.getMessage());
+        } catch (IOException e) {
+            LOGGER.info(e.getMessage());
         }
     }
 }
