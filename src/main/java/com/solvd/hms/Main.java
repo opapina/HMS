@@ -103,7 +103,7 @@ public class Main {
         }
 
         Service dryOfHall = new Cleaning(Service.Type.CLEANING, "hall", "dry", 2, BigDecimal.valueOf(25.06));
-        Service streetGR1 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.PLASTIC,  BigDecimal.valueOf(67.90), LocalDate.of(2022, 07, 12));
+        Service streetGR1 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.PLASTIC, BigDecimal.valueOf(67.90), LocalDate.of(2022, 07, 12));
         Service streetGR2 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.WASTE, BigDecimal.valueOf(50.00), LocalDate.of(2022, 07, 13));
 
         List<Service> services = new ArrayList<>();

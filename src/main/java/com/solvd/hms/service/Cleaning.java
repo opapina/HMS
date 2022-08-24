@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Cleaning extends Service {
 
-    private Type type;
+    private final Type type;
     private Integer surfaceDirection;
     private BigDecimal squareMeters;
     private LocalDateTime dateTimeCleaning;
