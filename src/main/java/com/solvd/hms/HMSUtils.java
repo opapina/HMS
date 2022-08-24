@@ -6,14 +6,19 @@ import com.solvd.hms.organization.HMS;
 import com.solvd.hms.resources.Worker;
 import com.solvd.hms.service.Service;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.*;
 
 public class HMSUtils {
+
+    private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     public static int checkService(Order<?> orders1, HMS hms) {
         boolean streetAvailable = Boolean.FALSE;
@@ -101,25 +106,23 @@ public class HMSUtils {
                 mapWords.put(word, count);
             } else count1++;
         }
+
         int duplicateCount = words.size() - uniqueWords.size();
-        System.out.println(duplicateCount);
+        LOGGER.info("count of duplicate words " + duplicateCount);
 
-        mapWords.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).forEach(System.out::println);
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(mapWords.entrySet());
+        Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
+            public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b) {
+                return Integer.compare(b.getValue(), a.getValue());
+            }
+        });
 
-//            try (FileWriter writer = new FileWriter("sortedDuplicate.txt", false)) {
-//                // запись всей строки
-//                String text = mapWords.toString();
-//                writer.write(text);
-//                // запись по символам
-//                writer.append('\n');
-//                writer.append('E');
-//
-//                writer.flush();
-//            } catch (IOException ex) {
-//
-//                System.out.println(ex.getMessage());
-//            }
-//        }
-
+        try (FileWriter writer = new FileWriter("sortedDuplicate.txt", false)) {
+            for (Map.Entry<String, Integer> e : entries) {
+                writer.write(e.getKey() + " " + e.getValue() + "\n");
+            }
+        } catch (IOException ex) {
+            LOGGER.info(ex.getMessage());
+        }
     }
 }

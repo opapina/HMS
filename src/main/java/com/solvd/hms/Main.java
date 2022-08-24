@@ -18,8 +18,6 @@ import com.solvd.hms.service.GarbageRemoval;
 import com.solvd.hms.service.Service;
 import com.solvd.hms.vehicle.*;
 
-import javax.swing.plaf.FontUIResource;
-
 import static com.solvd.hms.HMSUtils.readTxtFile;
 import static com.solvd.hms.HMSUtils.countSortDuplicate;
 
@@ -71,12 +69,6 @@ public class Main {
         for (Worker worker : workers) {
             LOGGER.info(worker.getFirstName());
         }
-
-//        String myHomeDir =  System.getProperty("user.home");
-        Path pathToResource = Paths.get("src", "main", "resources", "Mockingjay.txt");
-
-        List<String> allWords = readTxtFile(pathToResource);
-        countSortDuplicate(allWords);
 
         Address pervomaiskay = new Address("Pervomaiskay");
         Address zaharova = new Address("Zaharova");
@@ -147,6 +139,10 @@ public class Main {
 
         HMSUtils.move(iMove2);
 
+        Path pathToResource = Paths.get("src", "main", "resources", "Mockingjay.txt");
+        List<String> allWords = readTxtFile(pathToResource);
+        countSortDuplicate(allWords);
+
         Truck truck1 = new Truck("TGL", "MAN", Vehicle.WheelsCount.ONE);
         Truck truck2 = new Truck("2705", "KAMAZ", Vehicle.WheelsCount.FOUR);
         switch (truck1.getWheelsCount()) {
@@ -158,7 +154,7 @@ public class Main {
             case FOUR:
                 LOGGER.info("Truck 1 is worked right");
         }
-        if (!(truck2.getWheelsCount().getCount()==4)) {
+        if (!(truck2.getWheelsCount().getCount() == 4)) {
             LOGGER.info("Truck 2 is broken");
         } else LOGGER.info("Truck 2 is worked right");
 
