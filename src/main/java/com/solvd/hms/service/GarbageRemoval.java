@@ -7,11 +7,25 @@ import java.util.Objects;
 public class GarbageRemoval extends Service {
 
     public static int countRemoval;
-    private String garbageType;
+    private GarbageType garbageType;
     private BigDecimal quantity;
     private LocalDate dateRemoval;
 
-    public GarbageRemoval(String type, String place, String garbageType, BigDecimal quantity) {
+    public enum GarbageType {
+        PLASTIC("Plastic"), GLASS("Glass"), PAPER("Paper"), WASTE("Food waster");
+
+        private final String garbageType;
+
+        GarbageType(String garbageType) {
+            this.garbageType = garbageType;
+        }
+
+        public String getGarbageType() {
+            return garbageType;
+        }
+    }
+
+    public GarbageRemoval(Type type, String place, GarbageType garbageType, BigDecimal quantity) {
         super(type, place);
         this.garbageType = garbageType;
         this.quantity = quantity;
@@ -19,7 +33,7 @@ public class GarbageRemoval extends Service {
         countRemoval++;
     }
 
-    public GarbageRemoval(String type, String place, String garbageType, BigDecimal quantity, LocalDate dateRemoval) {
+    public GarbageRemoval(Type type, String place, GarbageType garbageType, BigDecimal quantity, LocalDate dateRemoval) {
         super(type, place);
         this.quantity = quantity;
         this.dateRemoval = dateRemoval;
@@ -43,20 +57,20 @@ public class GarbageRemoval extends Service {
         this.dateRemoval = dateRemoval;
     }
 
-    public String getGarbageType() {
+    public GarbageType getGarbageType() {
         return garbageType;
     }
 
-    public void setGarbageType(String garbageType) {
+    public void setGarbageType(GarbageType garbageType) {
         this.garbageType = garbageType;
     }
 
-    public void sort(String garbageType) {
-        if (garbageType == "Plastic") {
+    public void sort1(GarbageType garbageType) {
+        if (garbageType == GarbageType.PLASTIC) {
             setPlace("Plastic container");
-        } else if (garbageType == "Glass") {
+        } else if (garbageType == GarbageType.WASTE) {
             setPlace("Glass container");
-        } else if (garbageType == "Paper") {
+        } else if (garbageType == GarbageType.PAPER) {
             setPlace("Paper container");
         } else {
             setPlace("Common container");
@@ -79,7 +93,7 @@ public class GarbageRemoval extends Service {
         }
     }
 
-    public String getTypeService() {
+    public Type getTypeService() {
         return this.type;
     }
 

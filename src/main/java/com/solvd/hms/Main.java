@@ -102,9 +102,9 @@ public class Main {
             LOGGER.info(key + ":" + map.get(key));
         }
 
-        Service dryOfHall = new Cleaning("cleaning", "hall", "dry", 2, BigDecimal.valueOf(25.06));
-        Service streetGR1 = new GarbageRemoval("garbage removal", "Street", "Plastic", BigDecimal.valueOf(67.90), LocalDate.of(2022, 07, 12));
-        Service streetGR2 = new GarbageRemoval("garbage removal", "Street", "Food Garbage", BigDecimal.valueOf(50.00), LocalDate.of(2022, 07, 13));
+        Service dryOfHall = new Cleaning(Service.Type.CLEANING, "hall", "dry", 2, BigDecimal.valueOf(25.06));
+        Service streetGR1 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.PLASTIC,  BigDecimal.valueOf(67.90), LocalDate.of(2022, 07, 12));
+        Service streetGR2 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.WASTE, BigDecimal.valueOf(50.00), LocalDate.of(2022, 07, 13));
 
         List<Service> services = new ArrayList<>();
         services.add(dryOfHall);
@@ -133,11 +133,45 @@ public class Main {
 
         HMSUtils.communicate(mrJon);
 
-        HMSUtils.doSmth(iDo1);
-
         HMSUtils.doSmth(iDo2);
 
-        HMSUtils.move(iMove2);
+        switch (streetGR1.getType()) {
+            case CLEANING:
+                LOGGER.info("Worker do cleaning");
+                HMSUtils.doSmth(iDo1);
+                break;
+            case GARBAGEREMOVAL:
+                LOGGER.info("Worker move and look after the process");
+                HMSUtils.move(iMove2);
+                break;
+            case REPAIRINOUTLETPIPES:
+                HMSUtils.doSmth(piperVasia);
+                break;
+            case REPAIRINOUTLETWIRES:
+                HMSUtils.move(welderKolya);
+                break;
+            case RENOVATIONOFPREMISSES:
+                HMSUtils.doSmth(welderVanya);
+        }
+
+        switch (dryOfHall.getType()) {
+            case CLEANING:
+                LOGGER.info("Worker do cleaning");
+                HMSUtils.doSmth(iDo1);
+                break;
+            case GARBAGEREMOVAL:
+                LOGGER.info("Worker move and lok after the process");
+                HMSUtils.move(iMove2);
+                break;
+            case REPAIRINOUTLETPIPES:
+                HMSUtils.doSmth(piperVasia);
+                break;
+            case REPAIRINOUTLETWIRES:
+                HMSUtils.move(welderKolya);
+                break;
+            case RENOVATIONOFPREMISSES:
+                HMSUtils.doSmth(welderVanya);
+        }
 
         Path pathToResource = Paths.get("src", "main", "resources", "Mockingjay.txt");
         List<String> allWords = readTxtFile(pathToResource);
@@ -153,7 +187,9 @@ public class Main {
                 break;
             case FOUR:
                 LOGGER.info("Truck 1 is worked right");
+                break;
         }
+
         if (!(truck2.getWheelsCount().getCount() == 4)) {
             LOGGER.info("Truck 2 is broken");
         } else LOGGER.info("Truck 2 is worked right");

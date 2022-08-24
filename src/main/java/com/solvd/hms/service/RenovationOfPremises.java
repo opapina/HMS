@@ -12,7 +12,7 @@ public class RenovationOfPremises extends Service {
     private Integer quantityOfDoors;
     private LocalDateTime timeOfRenovation;
 
-    public RenovationOfPremises(String type, String place, Float heightOfWalls, Float widthOfWalls, Double squaresOfFloor, Integer quantityOfWindows, Integer quantityOfDoors) {
+    public RenovationOfPremises(Type type, String place, Float heightOfWalls, Float widthOfWalls, Double squaresOfFloor, Integer quantityOfWindows, Integer quantityOfDoors) {
         super(type, place);
         this.timeOfRenovation = LocalDateTime.now();
         this.heightOfWalls = heightOfWalls;
@@ -70,7 +70,7 @@ public class RenovationOfPremises extends Service {
         this.timeOfRenovation = timeOfRenovation;
     }
 
-    public String getTypeService() {
+    public Type getTypeService() {
         return type;
     }
 

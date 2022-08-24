@@ -8,7 +8,7 @@ public class RepairInOutLetPipes extends Service {
     private Double longP;
     private Double diameter;
 
-    public RepairInOutLetPipes(String type, String place, String material, Double longP, Double diameter) {
+    public RepairInOutLetPipes(Type type, String place, String material, Double longP, Double diameter) {
         super(type, place);
         this.material = material;
         this.longP = longP;
@@ -39,7 +39,7 @@ public class RepairInOutLetPipes extends Service {
         this.diameter = diameter;
     }
 
-    public String getTypeService() {
+    public Type getTypeService() {
         return this.type;
     }
 
