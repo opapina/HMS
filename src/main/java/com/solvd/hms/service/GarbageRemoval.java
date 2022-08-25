@@ -14,14 +14,14 @@ public class GarbageRemoval extends Service {
     public enum GarbageType {
         PLASTIC("Plastic"), GLASS("Glass"), PAPER("Paper"), WASTE("Food waster");
 
-        private final String Name;
+        private final String name;
 
-        GarbageType(String Name) {
-            this.Name = Name;
+        GarbageType(String name) {
+            this.name = name;
         }
 
         public String getName() {
-            return Name;
+            return name;
         }
     }
 

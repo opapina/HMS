@@ -90,7 +90,7 @@ public class HMSUtils {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.info(e.getMessage());
         }
         return allWords;
     }
@@ -119,7 +119,7 @@ public class HMSUtils {
         try {
             for(Map.Entry<String, Integer> e : entries) {
                 File writer = new File("sortedDuplicate.txt");
-                FileUtils.write(writer, e.getKey() + " " + e.getValue() + "\n", true);
+                FileUtils.writeLines(writer, entries, true);
             }
         } catch (IOException e) {
             LOGGER.info(e.getMessage());
