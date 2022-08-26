@@ -4,19 +4,33 @@ import java.util.Objects;
 
 public abstract class Service {
 
-    public String type;
+    public Type type;
     public String place;
 
-    public Service(String type, String place) {
+    public enum Type {
+        CLEANING("Cleaning"), GARBAGEREMOVAL("GarbageRemoval"), RENOVATIONOFPREMISSES("RenovationOfPremises"), REPAIRINOUTLETPIPES("RepairInOutLetPipes"), REPAIRINOUTLETWIRES("RepairInOutLetWires");
+
+        private final String displayName;
+
+        Type(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+
+    public Service(Type type, String place) {
         this.type = type;
         this.place = place;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

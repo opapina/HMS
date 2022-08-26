@@ -6,7 +6,7 @@ public class RepairInOutLetWires extends Service {
 
     private Double longW;
 
-    public RepairInOutLetWires(String type, String place, Double longW) {
+    public RepairInOutLetWires(Type type, String place, Double longW) {
         super(type, place);
         this.longW = longW;
     }
@@ -19,7 +19,7 @@ public class RepairInOutLetWires extends Service {
         this.longW = longW;
     }
 
-    public String getTypeService() {
+    public Type getTypeService() {
         return this.type;
     }
 

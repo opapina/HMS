@@ -16,9 +16,12 @@ import com.solvd.hms.resources.Worker;
 import com.solvd.hms.service.Cleaning;
 import com.solvd.hms.service.GarbageRemoval;
 import com.solvd.hms.service.Service;
-import com.solvd.hms.vehicle.Truck;
-import com.solvd.hms.vehicle.Car;
+import com.solvd.hms.vehicle.*;
 
+import static com.solvd.hms.HMSUtils.countSortDuplicate;
+import static com.solvd.hms.HMSUtils.readTxtFile;
+
+import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -28,7 +31,6 @@ public class Main {
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
-        Truck truck1 = new Truck("TGL", "MAN");
         Client<Address, Car> mrJon = new Client<>("Alex", "Jon", LocalDate.of(1999, 3, 6), List.of(new Apartment(2, 55.25, new Address("Frunze", 78, 24))));
         Client<Address, Car> mrKozlov = new Client<>("Sasha", "Kozlov", LocalDate.of(2005, 6, 8), List.of(new Apartment(1, 35, new Address("Kozlova", 25, 10))));
         Client<Address, Car> mrPupsik = new Client<>("Ivan", "Pupsik", LocalDate.of(2002, 12, 21), List.of(new Apartment(3, 40, new Address("Zaharova", 40, 21))));
@@ -99,9 +101,9 @@ public class Main {
             LOGGER.info(key + ":" + map.get(key));
         }
 
-        Service dryOfHall = new Cleaning("cleaning", "hall", "dry", 2, BigDecimal.valueOf(25.06));
-        Service streetGR1 = new GarbageRemoval("garbage removal", "Street", "Plastic", BigDecimal.valueOf(67.90), LocalDate.of(2022, 07, 12));
-        Service streetGR2 = new GarbageRemoval("garbage removal", "Street", "Food Garbage", BigDecimal.valueOf(50.00), LocalDate.of(2022, 07, 13));
+        Service dryOfHall = new Cleaning(Service.Type.CLEANING, "hall", "dry", 2, BigDecimal.valueOf(25.06));
+        Service streetGR1 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.PLASTIC, BigDecimal.valueOf(67.90), LocalDate.of(2022, 07, 12));
+        Service streetGR2 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.WASTE, BigDecimal.valueOf(50.00), LocalDate.of(2022, 07, 13));
 
         List<Service> services = new ArrayList<>();
         services.add(dryOfHall);
@@ -130,11 +132,67 @@ public class Main {
 
         HMSUtils.communicate(mrJon);
 
-        HMSUtils.doSmth(iDo1);
-
         HMSUtils.doSmth(iDo2);
 
-        HMSUtils.move(iMove2);
+        switch (streetGR1.getType()) {
+            case CLEANING:
+                LOGGER.info("Worker do cleaning");
+                HMSUtils.doSmth(iDo1);
+                break;
+            case GARBAGEREMOVAL:
+                LOGGER.info("Worker move and look after the process");
+                HMSUtils.move(iMove2);
+                break;
+            case REPAIRINOUTLETPIPES:
+                HMSUtils.doSmth(piperVasia);
+                break;
+            case REPAIRINOUTLETWIRES:
+                HMSUtils.move(welderKolya);
+                break;
+            case RENOVATIONOFPREMISSES:
+                HMSUtils.doSmth(welderVanya);
+        }
+
+        switch (dryOfHall.getType()) {
+            case CLEANING:
+                LOGGER.info("Worker do cleaning");
+                HMSUtils.doSmth(iDo1);
+                break;
+            case GARBAGEREMOVAL:
+                LOGGER.info("Worker move and lok after the process");
+                HMSUtils.move(iMove2);
+                break;
+            case REPAIRINOUTLETPIPES:
+                HMSUtils.doSmth(piperVasia);
+                break;
+            case REPAIRINOUTLETWIRES:
+                HMSUtils.move(welderKolya);
+                break;
+            case RENOVATIONOFPREMISSES:
+                HMSUtils.doSmth(welderVanya);
+        }
+
+        ClassLoader classLoader = TheClassName.class.getClassLoader();
+        File fileName = new File(Objects.requireNonNull(classLoader.getResource("Mockingjay.txt")).getFile());
+        List<String> allWords = readTxtFile(fileName);
+        countSortDuplicate(allWords);
+
+        Truck truck1 = new Truck("TGL", "MAN", Vehicle.WheelsCount.ONE);
+        Truck truck2 = new Truck("2705", "KAMAZ", Vehicle.WheelsCount.FOUR);
+        switch (truck1.getWheelsCount()) {
+            case ONE:
+            case TWO:
+            case THREE:
+                LOGGER.info("Truck 1 is broken");
+                break;
+            case FOUR:
+                LOGGER.info("Truck 1 is worked right");
+                break;
+        }
+
+        if (!(truck2.getWheelsCount().getCount() == 4)) {
+            LOGGER.info("Truck 2 is broken");
+        } else LOGGER.info("Truck 2 is worked right");
 
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
 

@@ -6,24 +6,24 @@ import java.util.Objects;
 
 public class Cleaning extends Service {
 
-    private String typeCleaning;
+    private final Type type;
     private Integer surfaceDirection;
     private BigDecimal squareMeters;
     private LocalDateTime dateTimeCleaning;
 
-    public Cleaning(String type, String place, String typeCleaning, Integer surfaceDirection, BigDecimal squareMeters) {
+    public Cleaning(Type type, String place, String typeCleaning, Integer surfaceDirection, BigDecimal squareMeters) {
         super(type, place);
         this.dateTimeCleaning = LocalDateTime.now();
         this.squareMeters = squareMeters;
-        this.typeCleaning = typeCleaning;
+        this.type = type;
         this.surfaceDirection = surfaceDirection;
     }
 
-    public Cleaning(String type, String place, String typeCleaning, Integer surfaceDirection, BigDecimal squareMeters, LocalDateTime dateTimeCleaning) {
+    public Cleaning(Type type, String place, String typeCleaning, Integer surfaceDirection, BigDecimal squareMeters, LocalDateTime dateTimeCleaning) {
         super(type, place);
         this.squareMeters = squareMeters;
         this.dateTimeCleaning = dateTimeCleaning;
-        this.typeCleaning = typeCleaning;
+        this.type = type;
         this.surfaceDirection = surfaceDirection;
     }
 
@@ -34,14 +34,6 @@ public class Cleaning extends Service {
         } else {
             System.out.println("from furniture");
         }
-    }
-
-    public String getTypeCleaning() {
-        return typeCleaning;
-    }
-
-    public void setTypeCleaning(String typeCleaning) {
-        this.typeCleaning = typeCleaning;
     }
 
     public Integer getSurfaceDirection() {
@@ -76,13 +68,13 @@ public class Cleaning extends Service {
         return squareMeters;
     }
 
-    public String getTypeService() {
+    public Type getTypeService() {
         return this.type;
     }
 
     @Override
     public String toString() {
-        return "Cleaning{" + "typeCleaning='" + typeCleaning + '\'' + ", surfaceDirection=" + surfaceDirection + ", squareMeters=" + squareMeters + ", dateTimeCleaning=" + dateTimeCleaning + ", type='" + type + '\'' + ", place='" + place + '\'' + '}';
+        return "Cleaning{" + "typeCleaning='" + type + '\'' + ", surfaceDirection=" + surfaceDirection + ", squareMeters=" + squareMeters + ", dateTimeCleaning=" + dateTimeCleaning + ", type='" + type + '\'' + ", place='" + place + '\'' + '}';
     }
 
     @Override
@@ -90,11 +82,11 @@ public class Cleaning extends Service {
         if (this == o) return true;
         if (!(o instanceof Cleaning)) return false;
         Cleaning cleaning = (Cleaning) o;
-        return Objects.equals(getTypeCleaning(), cleaning.getTypeCleaning()) && Objects.equals(getSurfaceDirection(), cleaning.getSurfaceDirection()) && Objects.equals(getSquareMeters(), cleaning.getSquareMeters()) && Objects.equals(getDateTimeCleaning(), cleaning.getDateTimeCleaning());
+        return Objects.equals(getType(), cleaning.getType()) && Objects.equals(getSurfaceDirection(), cleaning.getSurfaceDirection()) && Objects.equals(getSquareMeters(), cleaning.getSquareMeters()) && Objects.equals(getDateTimeCleaning(), cleaning.getDateTimeCleaning());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTypeCleaning(), getSurfaceDirection(), getSquareMeters(), getDateTimeCleaning());
+        return Objects.hash(getType(), getSurfaceDirection(), getSquareMeters(), getDateTimeCleaning());
     }
 }

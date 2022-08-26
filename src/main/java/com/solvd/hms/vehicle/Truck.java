@@ -9,8 +9,8 @@ public class Truck extends Vehicle {
     private Engine engine;
     private String typeTruck;
 
-    public Truck(String model, String brand) {
-        super(model, brand);
+    public Truck(String model, String brand, WheelsCount wheelsCount) {
+        super(model, brand, wheelsCount);
     }
 
     public Engine getEngine() {
