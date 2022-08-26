@@ -1,10 +1,14 @@
 package com.solvd.hms.base;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class Child extends Human implements IAsk, IMove {
 
+    private static final Logger LOGGER = LogManager.getLogger(Child.class);
     private Integer infantAge;
 
     public Child(String firstName, String lastName, LocalDate dob) {
@@ -38,12 +42,12 @@ public class Child extends Human implements IAsk, IMove {
     }
 
     public void ask() {
-        System.out.println("Can I play");
+        LOGGER.info("Can I play");
 
     }
 
     public void say() {
-        System.out.println("I want to play");
+        LOGGER.info("I want to play");
 
     }
 }

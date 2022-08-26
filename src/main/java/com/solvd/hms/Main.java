@@ -1,10 +1,7 @@
 package com.solvd.hms;
 
+import com.solvd.hms.base.*;
 import com.solvd.hms.client.Client;
-import com.solvd.hms.base.Address;
-import com.solvd.hms.base.Apartment;
-import com.solvd.hms.base.IDo;
-import com.solvd.hms.base.IMove;
 import com.solvd.hms.exception.ExperienceInvalidException;
 import com.solvd.hms.order.Order;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +19,10 @@ import static com.solvd.hms.HMSUtils.countSortDuplicate;
 import static com.solvd.hms.HMSUtils.readTxtFile;
 
 import java.io.File;
+import java.lang.reflect.AnnotatedType;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -30,6 +31,7 @@ public class Main {
 
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
         Client<Address, Car> mrJon = new Client<>("Alex", "Jon", LocalDate.of(1999, 3, 6), List.of(new Apartment(2, 55.25, new Address("Frunze", 78, 24))));
         Client<Address, Car> mrKozlov = new Client<>("Sasha", "Kozlov", LocalDate.of(2005, 6, 8), List.of(new Apartment(1, 35, new Address("Kozlova", 25, 10))));
@@ -188,6 +190,22 @@ public class Main {
             case FOUR:
                 LOGGER.info("Truck 1 is worked right");
                 break;
+        }
+
+        try {
+            Class<Child> childClass = (Class<Child>) Class.forName("src.main.java.com.solvd.hms.base.Child");
+            Constructor<Child> childConstructor = childClass.getDeclaredConstructor(String.class, String.class, LocalDate.class);
+            Child child4 = childConstructor.newInstance("Danya", "Lapin", LocalDate.of(2014, 8, 12));
+            Method childMethod = childClass.getDeclaredMethod("say");
+            Object methodResult = childMethod.invoke(child4);
+            Field childField1 = childClass.getDeclaredField("firstName");
+            Field childField2 = childClass.getDeclaredField("lastName");
+            Field childField3 = childClass.getDeclaredField("dob");
+            Object typeField1 = childField1.getGenericType();
+            Boolean field2 = childField2.equals("Lapin");
+            AnnotatedType childClassAnnotatedSuperclass = childClass.getAnnotatedSuperclass();
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
 
         if (!(truck2.getWheelsCount().getCount() == 4)) {
