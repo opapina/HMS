@@ -76,10 +76,6 @@ public class HMSUtils {
         iWork.think();
         iWork.operate();
     }
-//
-//    public static void incrementInteger(Integer num) {
-//        System.out.println(num);
-//    }
 
     public static List<String> readTxtFile(File fileName) {
         List<String> allWords = null;

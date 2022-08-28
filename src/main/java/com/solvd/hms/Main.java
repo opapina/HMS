@@ -21,8 +21,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -70,9 +72,9 @@ public class Main {
         workers.add(welderKolya);
         workers.add(welderVanya);
 
-        for (Worker worker : workers) {
-            LOGGER.info(worker.getFirstName());
-        }
+        workers.stream()
+                .forEach(worker -> LOGGER.info(worker.getFirstName() + " "
+                        + worker.getLastName() + " is a " + worker.getProfession()));
 
         Address pervomaiskay = new Address("Pervomaiskay");
         Address zaharova = new Address("Zaharova");
@@ -87,9 +89,8 @@ public class Main {
         addresses.add(frunze);
         addresses.add(chapaeva);
 
-        for (Address addresses1 : addresses) {
-            LOGGER.info(addresses1);
-        }
+        addresses.stream()
+                .forEach(address -> LOGGER.info(address.getStreet()));
 
         Map<String, Address> map = new HashMap<>();
         map.put("First quarter", zaharova);
@@ -102,9 +103,13 @@ public class Main {
         map.put("First quarter", chapaeva);
         map.put("Seventh quarter", zaharova);
 
-        for (String key : map.keySet()) {
-            LOGGER.info(key + ":" + map.get(key));
-        }
+        map.keySet().stream()
+                .forEach( key -> LOGGER.info(key + ":" + map.get(key)));
+
+        String keyName = String.valueOf(map.keySet().stream()
+                .filter(m -> map.values().equals(chapaeva))
+                .findFirst());
+        LOGGER.info(keyName);
 
         Service dryOfHall = new Cleaning(Service.Type.CLEANING, "hall", "dry", 2, BigDecimal.valueOf(25.06));
         Service streetGR1 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.PLASTIC, BigDecimal.valueOf(67.90), LocalDate.of(2022, 07, 12));
@@ -114,9 +119,9 @@ public class Main {
         services.add(dryOfHall);
         services.add(streetGR1);
         services.add(streetGR2);
-        for (Service serviceList : services) {
-            LOGGER.info(serviceList);
-        }
+
+        services.stream()
+                .forEach(service -> LOGGER.info(service.getType()));
 
         Order<Equipment> order1 = new Order<>(1, Service.Type.CLEANING, new Address("Chapaeva", 25, 70));
         Order<Equipment> order2 = new Order<>(2, Service.Type.GARBAGEREMOVAL, new Address("Kozlova", 50, 45));
@@ -127,9 +132,8 @@ public class Main {
         orders.add(order2);
         orders.add(order3);
 
-        for (Order<?> orders1 : orders) {
-            LOGGER.info(orders1);
-        }
+        orders.stream()
+                .forEach(order -> LOGGER.info(order));
 
         IDo iDo1 = new Worker("Zhenya", "Ivanov", LocalDate.of(1982, 1, 1), "piper", 17);
         IDo iDo2 = new Client<Address, Car>("Nikolay", "Bubnov", LocalDate.of(1999, 3, 5), List.of(new Apartment(3, 100, new Address("Nezavisimosti", 15, 4))));
@@ -212,60 +216,27 @@ public class Main {
 //        }
 
 
-//        List<String> numbers = new ArrayList<>(List.of("1", "2", "3", "4", "5"));
-//        Stream myStream = numbers.stream();
-//
-//        long size = numbers.stream().count();
-//        int newSum = myStream.mapToInt((s)->Integer.parseInt((String) s)).sum();
-
-//        System.out.println(numbers);
-
         if (!(truck2.getWheelsCount().getCount() == 4)) {
             LOGGER.info("Truck 2 is broken");
         } else LOGGER.info("Truck 2 is worked right");
 
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
 
-            List<Integer> res = (List<Integer>) orders.stream()
-                    .map(order -> HMSUtils.checkService(order, partizanskiHMS))
-                    .collect(Collectors.toList());
+//            List<Integer> res = (List<Integer>) orders.stream()
+//                    .map(order -> HMSUtils.checkService(order, partizanskiHMS))
+//                    .collect(Collectors.toList());
 
-//            orders.stream()
-//                    .map(order -> order , HMSUtils.checkService(order, partizanskiHMS))
-//                    .forEach(IntStream.range(0, orders.size()).map(order -> {
-//                        if (HMSUtils.checkService(orders.get(order), partizanskiHMS) == 1) {
-//                            System.out.println("Order " + orders.get(order) + " can be done");
-//                        } else {
-//                            System.out.println("Order " + orders.get(order) + " can't be done");
-//                        }
-//                    }
-//                    ));
-
-
-//            res.stream().forEach(r ->  {
-//                if (r == 1) {
-//                    LOGGER.info("Order " + res.indexOf(r)+ " can be done");
-//                } else {
-//                    LOGGER.info("Order " + res.get(r)  + " can't be done");
-//                }
-//            });
-//            orders.iterator().IntStream.range(0, res.size()).forEach(index -> {
-//                if (res.get(index) == 1) {
-//                    System.out.println("Order " + orders.get((index)) + " can be done");
-//                } else {
-//                    System.out.println("Order " + orders.get((index)) + " can't be done");
-//                }
-//            }));
-
-            for (int i = 0; i < orders.size(); i++) {
-                if (res.get(i) == 1) {
-                    LOGGER.info("Order " + orders.get(i) + " can be done");
-                } else {
-                    LOGGER.info("Order " + orders.get(i) + " can't be done");
-                }
-            }
+            orders.stream()
+                    .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 1)
+                    .map(Order::getId)
+                    .forEach(t -> LOGGER.info(t + "  number of orders can be done"));
+            orders.stream()
+                    .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 0)
+                    .map(Order::getId)
+                    .forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
         }
     }
 }
+
 
 
