@@ -15,9 +15,6 @@ import com.solvd.hms.service.GarbageRemoval;
 import com.solvd.hms.service.Service;
 import com.solvd.hms.vehicle.*;
 
-import static com.solvd.hms.HMSUtils.countSortDuplicate;
-import static com.solvd.hms.HMSUtils.readTxtFile;
-
 import java.io.File;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Constructor;
@@ -26,6 +23,12 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static com.solvd.hms.HMSUtils.*;
+import static java.util.stream.IntStream.*;
 
 public class Main {
 
@@ -115,9 +118,9 @@ public class Main {
             LOGGER.info(serviceList);
         }
 
-        Order<Equipment> order1 = new Order<>(1, "cleaning", new Address("Chapaeva", 25, 70));
-        Order<Equipment> order2 = new Order<>(2, "garbageRemoval", new Address("Kozlova", 50, 45));
-        Order<ElectroEquipment> order3 = new Order<>(3, "TVrepair", new Address("Frunze", 50, 45));
+        Order<Equipment> order1 = new Order<>(1, Service.Type.CLEANING, new Address("Chapaeva", 25, 70));
+        Order<Equipment> order2 = new Order<>(2, Service.Type.GARBAGEREMOVAL, new Address("Kozlova", 50, 45));
+        Order<ElectroEquipment> order3 = new Order<>(3, Service.Type.REPAIRINOUTLETWIRES, new Address("Frunze", 50, 45));
 
         List<Order<?>> orders = new ArrayList<>();
         orders.add(order1);
@@ -192,21 +195,30 @@ public class Main {
                 break;
         }
 
-        try {
-            Class<Child> childClass = (Class<Child>) Class.forName("src.main.java.com.solvd.hms.base.Child");
-            Constructor<Child> childConstructor = childClass.getDeclaredConstructor(String.class, String.class, LocalDate.class);
-            Child child4 = childConstructor.newInstance("Danya", "Lapin", LocalDate.of(2014, 8, 12));
-            Method childMethod = childClass.getDeclaredMethod("say");
-            Object methodResult = childMethod.invoke(child4);
-            Field childField1 = childClass.getDeclaredField("firstName");
-            Field childField2 = childClass.getDeclaredField("lastName");
-            Field childField3 = childClass.getDeclaredField("dob");
-            Object typeField1 = childField1.getGenericType();
-            Boolean field2 = childField2.equals("Lapin");
-            AnnotatedType childClassAnnotatedSuperclass = childClass.getAnnotatedSuperclass();
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Class<Child> childClass = (Class<Child>) Class.forName("src.main.java.com.solvd.hms.base.Child");
+//            Constructor<Child> childConstructor = childClass.getDeclaredConstructor(String.class, String.class, LocalDate.class);
+//            Child child4 = childConstructor.newInstance("Danya", "Lapin", LocalDate.of(2014, 8, 12));
+//            Method childMethod = childClass.getDeclaredMethod("say");
+//            Object methodResult = childMethod.invoke(child4);
+//            Field childField1 = childClass.getDeclaredField("firstName");
+//            Field childField2 = childClass.getDeclaredField("lastName");
+//            Field childField3 = childClass.getDeclaredField("dob");
+//            Object typeField1 = childField1.getGenericType();
+//            Boolean field2 = childField2.equals("Lapin");
+//            AnnotatedType childClassAnnotatedSuperclass = childClass.getAnnotatedSuperclass();
+//        } catch (ClassNotFoundException | NoSuchMethodException e) {
+//            throw new RuntimeException(e);
+//        }
+
+
+//        List<String> numbers = new ArrayList<>(List.of("1", "2", "3", "4", "5"));
+//        Stream myStream = numbers.stream();
+//
+//        long size = numbers.stream().count();
+//        int newSum = myStream.mapToInt((s)->Integer.parseInt((String) s)).sum();
+
+//        System.out.println(numbers);
 
         if (!(truck2.getWheelsCount().getCount() == 4)) {
             LOGGER.info("Truck 2 is broken");
@@ -214,11 +226,36 @@ public class Main {
 
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
 
-            List<Integer> res = new ArrayList<>();
-            List<Integer> results = new ArrayList<>(orders.size());
-            for (Order<?> orders1 : orders) {
-                res.add(HMSUtils.checkService(orders1, partizanskiHMS));
-            }
+            List<Integer> res = (List<Integer>) orders.stream()
+                    .map(order -> HMSUtils.checkService(order, partizanskiHMS))
+                    .collect(Collectors.toList());
+
+//            orders.stream()
+//                    .map(order -> order , HMSUtils.checkService(order, partizanskiHMS))
+//                    .forEach(IntStream.range(0, orders.size()).map(order -> {
+//                        if (HMSUtils.checkService(orders.get(order), partizanskiHMS) == 1) {
+//                            System.out.println("Order " + orders.get(order) + " can be done");
+//                        } else {
+//                            System.out.println("Order " + orders.get(order) + " can't be done");
+//                        }
+//                    }
+//                    ));
+
+
+//            res.stream().forEach(r ->  {
+//                if (r == 1) {
+//                    LOGGER.info("Order " + res.indexOf(r)+ " can be done");
+//                } else {
+//                    LOGGER.info("Order " + res.get(r)  + " can't be done");
+//                }
+//            });
+//            orders.iterator().IntStream.range(0, res.size()).forEach(index -> {
+//                if (res.get(index) == 1) {
+//                    System.out.println("Order " + orders.get((index)) + " can be done");
+//                } else {
+//                    System.out.println("Order " + orders.get((index)) + " can't be done");
+//                }
+//            }));
 
             for (int i = 0; i < orders.size(); i++) {
                 if (res.get(i) == 1) {

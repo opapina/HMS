@@ -4,6 +4,7 @@ import com.solvd.hms.base.Address;
 import com.solvd.hms.resources.Equipment;
 import com.solvd.hms.resources.Worker;
 import com.solvd.hms.service.Service;
+import com.solvd.hms.service.Service.Type;
 
 import java.util.Objects;
 import java.util.List;
@@ -11,14 +12,14 @@ import java.util.List;
 public class Order<E extends Equipment> {
 
     private Integer id;
-    private String serviceName;
+    private Type serviceName;
     private Address address;
     private Service service;
     private Worker worker;
 
     private List<E> equipments;
 
-    public Order(Integer id, String serviceName, Address address) {
+    public Order(Integer id, Type serviceName, Address address) {
         this.id = id;
         this.serviceName = serviceName;
         this.address = address;
@@ -33,11 +34,11 @@ public class Order<E extends Equipment> {
         this.id = id;
     }
 
-    public String getServiceName() {
+    public Type getServiceName() {
         return serviceName;
     }
 
-    public void setServiceName(String serviceName) {
+    public void setServiceName(Type serviceName) {
         this.serviceName = serviceName;
     }
 
@@ -87,11 +88,24 @@ public class Order<E extends Equipment> {
         if (this == o) return true;
         if (!(o instanceof Order)) return false;
         Order<?> order = (Order<?>) o;
-        return Objects.equals(getId(), order.getId());
+        return Objects.equals(getId(), order.getId()) && getServiceName() == order.getServiceName() && Objects.equals(getAddress(), order.getAddress()) && Objects.equals(getService(), order.getService()) && Objects.equals(getWorker(), order.getWorker()) && Objects.equals(getEquipments(), order.getEquipments());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getId(), getServiceName(), getAddress(), getService(), getWorker(), getEquipments());
     }
+
+    //    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Order)) return false;
+//        Order<?> order = (Order<?>) o;
+//        return Objects.equals(getId(), order.getId());
+//    }
+
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(getId());
+//    }
 }

@@ -26,11 +26,12 @@ public class HMSUtils {
         List<Address> addresses = hms.getAddresses();
         List<Service> services = hms.getServices();
 
+
         for (Address value : addresses) {
             if (value.getStreet().equals(orders1.getStreet())) {
-                continue;
+                streetAvailable = Boolean.TRUE;
+                break;
             }
-            streetAvailable = Boolean.TRUE;
         }
 
         if (!streetAvailable) {
@@ -75,6 +76,10 @@ public class HMSUtils {
         iWork.think();
         iWork.operate();
     }
+//
+//    public static void incrementInteger(Integer num) {
+//        System.out.println(num);
+//    }
 
     public static List<String> readTxtFile(File fileName) {
         List<String> allWords = null;
