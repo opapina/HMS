@@ -13,6 +13,7 @@
         <apache-logger-version>2.18.0</apache-logger-version>
         <apache-commons-lang3-version>3.12.0</apache-commons-lang3-version>
         <apache-commons-io-version>2.11.0</apache-commons-io-version>
+        <kafka-streams-version>3.2.1</kafka-streams-version>
     </properties>
 
     <dependencies>
@@ -36,6 +37,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${apache-commons-io-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>${kafka-streams-version}</version>
         </dependency>
     </dependencies>
 

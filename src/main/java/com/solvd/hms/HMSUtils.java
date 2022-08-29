@@ -15,39 +15,28 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HMSUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
-    public static int checkService(Order<?> orders1, HMS hms) {
-        boolean streetAvailable = Boolean.FALSE;
-        boolean serviceAvailable = Boolean.FALSE;
+    public static int checkService(Order<?> order, HMS hms) {
         List<Address> addresses = hms.getAddresses();
         List<Service> services = hms.getServices();
 
+        Optional<Address> street = addresses.stream()
+                .filter(address -> address.getStreet().equals(order.getStreet()))
+                .findFirst();
 
-        for (Address value : addresses) {
-            if (value.getStreet().equals(orders1.getStreet())) {
-                streetAvailable = Boolean.TRUE;
-                break;
-            }
-        }
+        Optional<Service> serviceOr =services.stream()
+                .filter(service -> service.type.equals(order.getServiceName()))
+                .findFirst();
 
-        if (!streetAvailable) {
-            return 0;
-        }
-
-        for (Service service : services) {
-            if (service.type.equals(orders1.getServiceName())) {
-                serviceAvailable = Boolean.TRUE;
-                break;
-            }
-        }
-        if (!serviceAvailable) {
-            return 0;
-        }
-        return 1;
+        if (!street.isPresent() && !serviceOr.isEmpty()) {
+            return 1;}
+        else { return 0;}
     }
 
     public static void communicate(Human human) {
@@ -77,50 +66,31 @@ public class HMSUtils {
         iWork.operate();
     }
 
-    public static List<String> readTxtFile(File fileName) {
-        List<String> allWords = null;
-        try {
-            List<String> lines = FileUtils.readLines(fileName, StandardCharsets.UTF_8);
-            allWords = new ArrayList<>();
-            for (String line : lines) {
-                String[] words = StringUtils.split(line, "[ ,?:\\.]");
-                for (String word : words) {
-                    if (word.length() > 0) {
-                        allWords.add(word);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.info(e.getMessage());
-        }
+    public static List<String> readTxtFile(File fileName) throws IOException {
+        List<String> lines = FileUtils.readLines(fileName, StandardCharsets.UTF_8);
+        String words = lines.stream().map(Object::toString).reduce("", String::concat);
+        List<String> allWords = List.of(StringUtils.split(words, "[ ,\"?:\\.]"));
         return allWords;
     }
 
-    public static <e> void countSortDuplicate(List<String> words) throws IOException {
-        HashMap<String, Integer> mapWords = new HashMap<>();
-        Set<String> uniqueWords = new HashSet<>(words);
-        int count1 = 0;
-        for (String word : uniqueWords) {
-            int count = Collections.frequency(words, word);
-            if (count > 1) {
-                mapWords.put(word, count);
-            } else count1++;
-        }
-
-        int duplicateCount = words.size() - uniqueWords.size();
+    public static void countSortDuplicate(List<String> words) throws IOException {
+        Map<Object, Long > mapWords = words.stream()
+                .filter(w -> (Collections.frequency(words, w) > 1))
+                .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+        int duplicateCount = words.size() -mapWords.size();
         LOGGER.info("count of duplicate words " + duplicateCount);
 
-        List<Map.Entry<String, Integer>> entries = new ArrayList<>(mapWords.entrySet());
-        entries.sort(new Comparator<Map.Entry<String, Integer>>() {
-            public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b) {
-                return Integer.compare(b.getValue(), a.getValue());
+        List<Map.Entry<Object, Long>> entries = new ArrayList<>(mapWords.entrySet());
+        entries.sort(new Comparator<Map.Entry<Object, Long>>() {
+            public int compare(Map.Entry<Object, Long> a, Map.Entry<Object, Long> b) {
+                return Long.compare(b.getValue(), a.getValue());
             }
         });
 
         try {
-            for(Map.Entry<String, Integer> e : entries) {
+            for(Map.Entry<Object, Long> e : entries) {
                 File writer = new File("sortedDuplicate.txt");
-                FileUtils.writeLines(writer, entries, true);
+                FileUtils.writeLines(writer, entries, false);
             }
         } catch (IOException e) {
             LOGGER.info(e.getMessage());

@@ -16,21 +16,11 @@ import com.solvd.hms.service.Service;
 import com.solvd.hms.vehicle.*;
 
 import java.io.File;
-import java.lang.reflect.AnnotatedType;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static com.solvd.hms.HMSUtils.*;
-import static java.util.stream.IntStream.*;
 
 public class Main {
 
@@ -38,18 +28,17 @@ public class Main {
 
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
-        Client<Address, Car> mrJon = new Client<>("Alex", "Jon", LocalDate.of(1999, 3, 6), List.of(new Apartment(2, 55.25, new Address("Frunze", 78, 24))));
-        Client<Address, Car> mrKozlov = new Client<>("Sasha", "Kozlov", LocalDate.of(2005, 6, 8), List.of(new Apartment(1, 35, new Address("Kozlova", 25, 10))));
-        Client<Address, Car> mrPupsik = new Client<>("Ivan", "Pupsik", LocalDate.of(2002, 12, 21), List.of(new Apartment(3, 40, new Address("Zaharova", 40, 21))));
-        Set<Client<Address, Car>> clients = new HashSet<>();
+        Client<Apartment, Car> mrJon = new Client<>("Alex", "Jon", LocalDate.of(1999, 3, 6), List.of(new Apartment(2, 55.25, new Address("Frunze", 78, 24))));
+        Client<Apartment, Car> mrKozlov = new Client<>("Sasha", "Kozlov", LocalDate.of(2005, 6, 8), List.of(new Apartment(1, 35, new Address("Kozlova", 25, 10))));
+        Client<Apartment, Car> mrPupsik = new Client<>("Ivan", "Pupsik", LocalDate.of(2002, 12, 21), List.of(new Apartment(3, 40, new Address("Zaharova", 40, 21))));
+        Set<Client<Apartment, Car>> clients = new HashSet<>();
         clients.add(mrJon);
         clients.add(mrPupsik);
         clients.add(mrPupsik);
         clients.add(mrKozlov);
 
-        for (Client<Address, Car> client : clients) {
-            LOGGER.info(client.getLastName());
-        }
+        clients.stream()
+                .forEach(c -> LOGGER.info(c.toString()));
 
         Worker piperVasia;
         try {
@@ -106,10 +95,14 @@ public class Main {
         map.keySet().stream()
                 .forEach( key -> LOGGER.info(key + ":" + map.get(key)));
 
+        map.keySet().stream()
+                .filter(m -> map.get(m).equals(frunze))
+                .forEach(m -> LOGGER.info(m +"  "+ map.get(m)));
+
         String keyName = String.valueOf(map.keySet().stream()
-                .filter(m -> map.values().equals(chapaeva))
+                .filter(m -> map.get(m).equals(chapaeva))
                 .findFirst());
-        LOGGER.info(keyName);
+        LOGGER.info(keyName + "  " + chapaeva);
 
         Service dryOfHall = new Cleaning(Service.Type.CLEANING, "hall", "dry", 2, BigDecimal.valueOf(25.06));
         Service streetGR1 = new GarbageRemoval(Service.Type.GARBAGEREMOVAL, "Street", GarbageRemoval.GarbageType.PLASTIC, BigDecimal.valueOf(67.90), LocalDate.of(2022, 07, 12));
@@ -136,7 +129,7 @@ public class Main {
                 .forEach(order -> LOGGER.info(order));
 
         IDo iDo1 = new Worker("Zhenya", "Ivanov", LocalDate.of(1982, 1, 1), "piper", 17);
-        IDo iDo2 = new Client<Address, Car>("Nikolay", "Bubnov", LocalDate.of(1999, 3, 5), List.of(new Apartment(3, 100, new Address("Nezavisimosti", 15, 4))));
+        IDo iDo2 = new Client<Apartment, Car>("Nikolay", "Bubnov", LocalDate.of(1999, 3, 5), List.of(new Apartment(3, 100, new Address("Nezavisimosti", 15, 4))));
         IMove iMove2 = new Worker("Zhenya", "Ivanov", LocalDate.of(1982, 1, 1), "piper", 17);
 
         HMSUtils.communicate(mrJon);
@@ -198,6 +191,9 @@ public class Main {
                 LOGGER.info("Truck 1 is worked right");
                 break;
         }
+        if (!(truck2.getWheelsCount().getCount() == 4)) {
+            LOGGER.info("Truck 2 is broken");
+        } else LOGGER.info("Truck 2 is worked right");
 
 //        try {
 //            Class<Child> childClass = (Class<Child>) Class.forName("src.main.java.com.solvd.hms.base.Child");
@@ -216,15 +212,9 @@ public class Main {
 //        }
 
 
-        if (!(truck2.getWheelsCount().getCount() == 4)) {
-            LOGGER.info("Truck 2 is broken");
-        } else LOGGER.info("Truck 2 is worked right");
+
 
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
-
-//            List<Integer> res = (List<Integer>) orders.stream()
-//                    .map(order -> HMSUtils.checkService(order, partizanskiHMS))
-//                    .collect(Collectors.toList());
 
             orders.stream()
                     .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 1)
