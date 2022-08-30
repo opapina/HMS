@@ -5,18 +5,17 @@ import com.solvd.hms.order.Order;
 import com.solvd.hms.organization.HMS;
 import com.solvd.hms.resources.Worker;
 import com.solvd.hms.service.Service;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class HMSUtils {
 
@@ -30,13 +29,15 @@ public class HMSUtils {
                 .filter(address -> address.getStreet().equals(order.getStreet()))
                 .findFirst();
 
-        Optional<Service> serviceOr =services.stream()
+        Optional<Service> serviceOr = services.stream()
                 .filter(service -> service.type.equals(order.getServiceName()))
                 .findFirst();
 
         if (!street.isPresent() && !serviceOr.isEmpty()) {
-            return 1;}
-        else { return 0;}
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     public static void communicate(Human human) {
@@ -51,9 +52,10 @@ public class HMSUtils {
         iAsk.askHelp();
     }
 
-    public static void doSmth(IDo iDo) {
+    public static BiFunction<String, Boolean, Integer> doSmth(IDo iDo) {
         iDo.doOrder();
         iDo.tellOfOrder();
+        return null;
     }
 
     public static void move(IMove iMove) {
@@ -68,16 +70,18 @@ public class HMSUtils {
 
     public static List<String> readTxtFile(File fileName) throws IOException {
         List<String> lines = FileUtils.readLines(fileName, StandardCharsets.UTF_8);
-        String words = lines.stream().map(Object::toString).reduce("", String::concat);
+        String words = lines.stream()
+                .map(Object::toString)
+                .reduce("", String::concat);
         List<String> allWords = List.of(StringUtils.split(words, "[ ,\"?:\\.]"));
         return allWords;
     }
 
     public static void countSortDuplicate(List<String> words) throws IOException {
-        Map<Object, Long > mapWords = words.stream()
+        Map<Object, Long> mapWords = words.stream()
                 .filter(w -> (Collections.frequency(words, w) > 1))
                 .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
-        int duplicateCount = words.size() -mapWords.size();
+        int duplicateCount = words.size() - mapWords.size();
         LOGGER.info("count of duplicate words " + duplicateCount);
 
         List<Map.Entry<Object, Long>> entries = new ArrayList<>(mapWords.entrySet());
@@ -87,13 +91,14 @@ public class HMSUtils {
             }
         });
 
-        try {
-            for(Map.Entry<Object, Long> e : entries) {
-                File writer = new File("sortedDuplicate.txt");
+        entries.stream()
+            .forEach(e -> {
+            File writer = new File("sortedDuplicate.txt");
+            try {
                 FileUtils.writeLines(writer, entries, false);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
-        } catch (IOException e) {
-            LOGGER.info(e.getMessage());
-        }
+        });
     }
 }

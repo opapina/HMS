@@ -14,11 +14,16 @@ import com.solvd.hms.service.Cleaning;
 import com.solvd.hms.service.GarbageRemoval;
 import com.solvd.hms.service.Service;
 import com.solvd.hms.vehicle.*;
+import org.apache.logging.log4j.util.Supplier;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.*;
 
 import static com.solvd.hms.HMSUtils.*;
 
@@ -62,8 +67,7 @@ public class Main {
         workers.add(welderVanya);
 
         workers.stream()
-                .forEach(worker -> LOGGER.info(worker.getFirstName() + " "
-                        + worker.getLastName() + " is a " + worker.getProfession()));
+                .forEach(worker -> LOGGER.info(worker.getFirstName() + " " + worker.getLastName() + " is a " + worker.getProfession()));
 
         Address pervomaiskay = new Address("Pervomaiskay");
         Address zaharova = new Address("Zaharova");
@@ -93,15 +97,16 @@ public class Main {
         map.put("Seventh quarter", zaharova);
 
         map.keySet().stream()
-                .forEach( key -> LOGGER.info(key + ":" + map.get(key)));
+                .forEach(key -> LOGGER.info(key + ":" + map.get(key)));
 
         map.keySet().stream()
                 .filter(m -> map.get(m).equals(frunze))
-                .forEach(m -> LOGGER.info(m +"  "+ map.get(m)));
+                .forEach(m -> LOGGER.info(m + "  " + map.get(m)));
 
         String keyName = String.valueOf(map.keySet().stream()
                 .filter(m -> map.get(m).equals(chapaeva))
                 .findFirst());
+
         LOGGER.info(keyName + "  " + chapaeva);
 
         Service dryOfHall = new Cleaning(Service.Type.CLEANING, "hall", "dry", 2, BigDecimal.valueOf(25.06));
@@ -195,35 +200,57 @@ public class Main {
             LOGGER.info("Truck 2 is broken");
         } else LOGGER.info("Truck 2 is worked right");
 
-//        try {
-//            Class<Child> childClass = (Class<Child>) Class.forName("src.main.java.com.solvd.hms.base.Child");
-//            Constructor<Child> childConstructor = childClass.getDeclaredConstructor(String.class, String.class, LocalDate.class);
-//            Child child4 = childConstructor.newInstance("Danya", "Lapin", LocalDate.of(2014, 8, 12));
-//            Method childMethod = childClass.getDeclaredMethod("say");
-//            Object methodResult = childMethod.invoke(child4);
-//            Field childField1 = childClass.getDeclaredField("firstName");
-//            Field childField2 = childClass.getDeclaredField("lastName");
-//            Field childField3 = childClass.getDeclaredField("dob");
-//            Object typeField1 = childField1.getGenericType();
-//            Boolean field2 = childField2.equals("Lapin");
-//            AnnotatedType childClassAnnotatedSuperclass = childClass.getAnnotatedSuperclass();
-//        } catch (ClassNotFoundException | NoSuchMethodException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            Class<Child> childClass = (Class<Child>) Class.forName("com.solvd.hms.base.Child");
+            Constructor<Child> childConstructor = childClass.getDeclaredConstructor(String.class, String.class, LocalDate.class);
+            Child child4 = childConstructor.newInstance("Danya", "Lapin", LocalDate.of(2014, 8, 12));
+            Method childMethod = childClass.getDeclaredMethod("say");
+            Object methodResult = childMethod.invoke(child4);
+            Field childField1 = childClass.getDeclaredField("infantAge");
+            Object typeField1 = childField1.getGenericType();
+            Boolean field2 = childField1.equals(8);
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
 
+        IRun run = () -> LOGGER.info("use the functional interface");
+        ICount count = (t, u) -> {
+            double s = t / u;
+            LOGGER.info("after divide return " + s);
+        };
+        IWait wait = (w) -> LOGGER.info("I'm waiting " + w + " minutes");
 
+        run.run();
+        count.count(555.34, 3);
+        wait.wait1(7);
 
+        Runnable workerDo = () -> LOGGER.info("try to use build-in functional interfaces");
+        Consumer<String> sayer = saySmth -> LOGGER.info("Client say " + saySmth);
+        Supplier<Integer> randomGeter = () -> {
+            int value = (int) (Math.random() * 17);
+            return value;
+        };
+        Function<String, Integer> dataChanger = Integer::valueOf;
+        Predicate<Integer> isEvenNumber = x -> (x % 2 == 0);
+        BiConsumer<String, String> greeter = (firstName, lastName) -> LOGGER.info("Hello " + firstName + " " + lastName);
+        BiFunction<String, String, String> namer = (firstName, lastName) -> firstName + " " + lastName;
+
+        workerDo.run();
+        sayer.accept("Thanks a lot!");
+        LOGGER.info("Random number = " + randomGeter.get());
+        LOGGER.info("Change data type: " + dataChanger.apply("10000"));
+        LOGGER.info(isEvenNumber.test(10));
+        LOGGER.info(isEvenNumber.test(5));
+        greeter.accept(welderKolya.getFirstName(), welderKolya.getLastName());
+        LOGGER.info(namer.apply(cleanerPetya.getFirstName(), cleanerPetya.getLastName()));
 
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
-
             orders.stream()
                     .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 1)
-                    .map(Order::getId)
-                    .forEach(t -> LOGGER.info(t + "  number of orders can be done"));
+                    .map(Order::getId).forEach(t -> LOGGER.info(t + "  number of orders can be done"));
             orders.stream()
                     .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 0)
-                    .map(Order::getId)
-                    .forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
+                    .map(Order::getId).forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
         }
     }
 }
