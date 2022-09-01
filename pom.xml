@@ -14,6 +14,7 @@
         <apache-commons-lang3-version>3.12.0</apache-commons-lang3-version>
         <apache-commons-io-version>2.11.0</apache-commons-io-version>
         <kafka-streams-version>3.2.1</kafka-streams-version>
+        <commons-dbcp2-version>2.9.0</commons-dbcp2-version>
     </properties>
 
     <dependencies>
@@ -43,6 +44,13 @@
             <artifactId>kafka-streams</artifactId>
             <version>${kafka-streams-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>${commons-dbcp2-version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -52,12 +60,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 </project>
-
 

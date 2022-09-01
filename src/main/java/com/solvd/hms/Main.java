@@ -23,6 +23,10 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.*;
 
 import static com.solvd.hms.HMSUtils.*;
@@ -252,8 +256,58 @@ public class Main {
                     .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 0)
                     .map(Order::getId).forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
         }
+
+        MyThread myThread = new MyThread();
+        myThread.start();
+
+        new Thread(() -> {
+            System.out.println("using runnable");
+        }).start();
+
+        CompletableFuture<String> passwordFuture = CompletableFuture.supplyAsync(() -> {
+            pause(2);
+            //..
+            return "hello";
+        });
+
+        try {
+            passwordFuture.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(passwordFuture);
+
+        String password1 = passwordFuture.join();
+
+        CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(()-> 1);
+        CompletableFuture<Integer> cf2 = CompletableFuture.supplyAsync(()-> 2);
+        CompletableFuture<Integer> cf3 = CompletableFuture.supplyAsync(()-> 3);
+        CompletableFuture<Integer> cf4 = CompletableFuture.supplyAsync(()-> 4);
+
+        CompletableFuture<Void> cfs = CompletableFuture.allOf(cf1, cf2, cf3, cf4);
+
+        cfs.join();
+
+        Integer cd3Value = cf3.join();
+
+        CompletableFuture<String> myFuture1 = CompletableFuture.supplyAsync(()-> {
+            pause(3);
+            return "asdf";
+        }).thenApplyAsync( p -> {
+            //..
+            return (p + " fdsa");
+        });
+    }
+
+    private static void pause(int seconds) {
+        try {
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
+
 
 
 
