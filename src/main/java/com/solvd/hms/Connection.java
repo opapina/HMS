@@ -1,39 +1,45 @@
 package com.solvd.hms;
 
-import java.sql.SQLException;
-
 public class Connection {
-    private static Connection ds = new Connection();
 
-    static {
-        ds.setUsername("user");
-        ds.setPassword("password");
-        ds.setMinIdle(5);
-        ds.setMaxIdle(10);
-        ds.setMaxOpenPreparedStatements(100);
+    private String url;
+    private String username;
+    private String password;
+
+    private Connection(String url, String username, String password) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
     }
 
-    private void setUsername(String user) {
+    public String getUrl() {
+        return url;
     }
 
-    private void setPassword(String password) {
-
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    private void setMaxOpenPreparedStatements(int i) {
+    public String getUsername() {
+        return username;
     }
 
-    private void setMaxIdle(int i) {
-
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    private void setMinIdle(int i) {
-
+    public String getPassword() {
+        return password;
     }
 
-    public static Connection getConnection() throws SQLException {
-        return ds.getConnection();
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    private Connection(){ }
+    public void printData() {
+        System.out.println("info from " + this.getUrl());
+    }
 }
+
+
+

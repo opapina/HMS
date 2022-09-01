@@ -1,14 +1,11 @@
 package com.solvd.hms;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-import java.sql.SQLException;
+import java.util.List;
 
 public class ConnectionPool {
 
     private static ConnectionPool INSTANCE;
+    private List<Connection> connections;
 
     private ConnectionPool() {
     }
@@ -20,18 +17,11 @@ public class ConnectionPool {
         return INSTANCE;
     }
 
-    public Connection getConnection(){
-        Context ctx;
-        Connection c = null;
-        try {
-            ctx = new InitialContext();
-            DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/myDB");
-            c = (Connection) ds.getConnection();
-        } catch (NamingException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return c;
+    public synchronized Connection getConnection(Connection currentConnection) {
+        System.out.println("successfully connected " + currentConnection.getUrl());
+        return currentConnection;
+    }
+    public void releaseConnection(Connection connection) {
+        System.out.println("Connection" + connection.getUrl() + " released");
     }
 }
