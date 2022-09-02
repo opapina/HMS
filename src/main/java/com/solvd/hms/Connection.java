@@ -6,7 +6,7 @@ public class Connection {
     private String username;
     private String password;
 
-    private Connection(String url, String username, String password) {
+    public Connection(String url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;

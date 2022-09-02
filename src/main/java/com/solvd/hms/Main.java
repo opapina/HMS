@@ -21,6 +21,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -257,46 +258,121 @@ public class Main {
                     .map(Order::getId).forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
         }
 
-        MyThread myThread = new MyThread();
-        myThread.start();
+        MyThread myThread1 = new MyThread();
+        myThread1.start();
+        MyThread myThread2 = new MyThread();
+        myThread2.start();
+        MyThread myThread3 = new MyThread();
+        myThread3.start();
+        MyThread myThread4 = new MyThread();
+        myThread4.start();
+        MyThread myThread5 = new MyThread();
+        myThread5.start();
 
-        new Thread(() -> {
+        new Thread (() -> {
             System.out.println("using runnable");
         }).start();
 
-        CompletableFuture<String> passwordFuture = CompletableFuture.supplyAsync(() -> {
-            pause(2);
-            //..
-            return "hello";
-        });
+        System.out.println(myThread5);
 
+        CompletableFuture<String> password1 = CompletableFuture.supplyAsync(() -> {
+            pause(7);
+            String password = passwordRandom();
+            return password;
+        });
         try {
-            passwordFuture.get(10, TimeUnit.SECONDS);
+            password1.get(10, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(passwordFuture);
 
-        String password1 = passwordFuture.join();
-
-        CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(()-> 1);
-        CompletableFuture<Integer> cf2 = CompletableFuture.supplyAsync(()-> 2);
-        CompletableFuture<Integer> cf3 = CompletableFuture.supplyAsync(()-> 3);
-        CompletableFuture<Integer> cf4 = CompletableFuture.supplyAsync(()-> 4);
-
-        CompletableFuture<Void> cfs = CompletableFuture.allOf(cf1, cf2, cf3, cf4);
-
-        cfs.join();
-
-        Integer cd3Value = cf3.join();
-
-        CompletableFuture<String> myFuture1 = CompletableFuture.supplyAsync(()-> {
-            pause(3);
-            return "asdf";
-        }).thenApplyAsync( p -> {
-            //..
-            return (p + " fdsa");
+        CompletableFuture<String> password2 = CompletableFuture.supplyAsync(() -> {
+            pause(5);
+            String password = passwordRandom();
+            return password;
         });
+        try {
+            password2.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+        CompletableFuture<String> password3 = CompletableFuture.supplyAsync(() -> {
+            pause(2);
+            String password = passwordRandom();
+            return password;
+        });
+        try {
+            password3.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+        CompletableFuture<String> password4 = CompletableFuture.supplyAsync(() -> {
+            pause(1);
+            String password = passwordRandom();
+            return password;
+        });
+        try {
+            password4.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+        CompletableFuture<String> password5 = CompletableFuture.supplyAsync(() -> {
+            pause(9);
+            String password = passwordRandom();
+            return password;
+        });
+        try {
+            password5.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+
+        CompletableFuture<Void> passwords = CompletableFuture.allOf(password1, password2, password3, password4, password5);
+
+        passwords.join();
+
+        String pass1 = password1.join();
+        String pass2 = password2.join();
+        String pass3 = password3.join();
+        String pass4 = password4.join();
+        String pass5 = password5.join();
+
+        System.out.println(pass1);
+        System.out.println(pass2);
+        System.out.println(pass3);
+        System.out.println(pass4);
+        System.out.println(pass5);
+
+        Connection cn1 = new Connection("www.gmail.com", "olya", "asdf" );
+        Connection cn2 = new Connection("www.mail.ru", "vasya", "hgfs" );
+        Connection cn3 = new Connection("www.google.com", "sergey", "lkjg" );
+        Connection cn4 = new Connection("www.tut.by", "lena", "jkhhgf" );
+        Connection cn5 = new Connection("www.github.com", "bill", "ajhgf" );
+
+        List<Connection> cns = new ArrayList<>();
+        cns.add(cn1);
+        cns.add(cn2);
+        cns.add(cn3);
+        cns.add(cn4);
+        cns.add(cn5);
+
+        ConnectionPool connectionPool = new ConnectionPool(5);
+        connectionPool.setConnections(cns);
+
+        Connection con1 = connectionPool.getConnection();
+        Connection con2 = connectionPool.getConnection();
+        Connection con3 = connectionPool.getConnection();
+        Connection con4 = connectionPool.getConnection();
+        Connection con5 = connectionPool.getConnection();
+
+        connectionPool.releaseConnection(con5);
+        connectionPool.releaseConnection(con4);
+
+        Connection con6 = connectionPool.getConnection();
+        Connection con7 = connectionPool.getConnection();
+//        Connection con8 = connectionPool.getConnection();
+//        Connection con9 = connectionPool.getConnection();
+//        Connection con10 = connectionPool.getConnection();
     }
 
     private static void pause(int seconds) {
@@ -305,6 +381,19 @@ public class Main {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String passwordRandom() {
+        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 6; i++)
+        {
+            int randomIndex = random.nextInt(chars.length());
+            sb.append(chars.charAt(randomIndex));
+        }
+        LOGGER.info("Password was created: " + sb);
+        return sb.toString();
     }
 }
 
