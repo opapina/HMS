@@ -24,13 +24,11 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.function.*;
 
 import static com.solvd.hms.HMSUtils.*;
+//import static org.apache.logging.log4j.core.jmx.Server.executor;
 
 public class Main {
 
@@ -260,25 +258,21 @@ public class Main {
 
         MyThread myThread1 = new MyThread();
         myThread1.start();
+        LOGGER.info("New " + myThread1 + "thread was started");
         MyThread myThread2 = new MyThread();
         myThread2.start();
-        MyThread myThread3 = new MyThread();
-        myThread3.start();
-        MyThread myThread4 = new MyThread();
-        myThread4.start();
-        MyThread myThread5 = new MyThread();
-        myThread5.start();
-
-        new Thread (() -> {
-            System.out.println("using runnable");
+        LOGGER.info("New " + myThread2 + "thread was started");
+        new Thread(() -> {
+            LOGGER.info("using runnable 1");
         }).start();
 
-        System.out.println(myThread5);
+        new Thread(() -> {
+            LOGGER.info("using runnable 2");
+        }).start();
 
         CompletableFuture<String> password1 = CompletableFuture.supplyAsync(() -> {
-            pause(7);
-            String password = passwordRandom();
-            return password;
+            pause(3);
+            return passwordRandom();
         });
         try {
             password1.get(10, TimeUnit.SECONDS);
@@ -287,9 +281,8 @@ public class Main {
         }
 
         CompletableFuture<String> password2 = CompletableFuture.supplyAsync(() -> {
-            pause(5);
-            String password = passwordRandom();
-            return password;
+            pause(2);
+            return passwordRandom();
         });
         try {
             password2.get(10, TimeUnit.SECONDS);
@@ -297,9 +290,8 @@ public class Main {
             throw new RuntimeException(e);
         }
         CompletableFuture<String> password3 = CompletableFuture.supplyAsync(() -> {
-            pause(2);
-            String password = passwordRandom();
-            return password;
+            pause(1);
+            return passwordRandom();
         });
         try {
             password3.get(10, TimeUnit.SECONDS);
@@ -308,8 +300,7 @@ public class Main {
         }
         CompletableFuture<String> password4 = CompletableFuture.supplyAsync(() -> {
             pause(1);
-            String password = passwordRandom();
-            return password;
+            return passwordRandom();
         });
         try {
             password4.get(10, TimeUnit.SECONDS);
@@ -317,9 +308,8 @@ public class Main {
             throw new RuntimeException(e);
         }
         CompletableFuture<String> password5 = CompletableFuture.supplyAsync(() -> {
-            pause(9);
-            String password = passwordRandom();
-            return password;
+            pause(4);
+            return passwordRandom();
         });
         try {
             password5.get(10, TimeUnit.SECONDS);
@@ -337,45 +327,111 @@ public class Main {
         String pass4 = password4.join();
         String pass5 = password5.join();
 
-        System.out.println(pass1);
-        System.out.println(pass2);
-        System.out.println(pass3);
-        System.out.println(pass4);
-        System.out.println(pass5);
+        LOGGER.info(pass1 + " " + pass2 + " " + pass3 + " " + pass4 + " " + pass5);
 
-        Connection cn1 = new Connection("www.gmail.com", "olya", "asdf" );
-        Connection cn2 = new Connection("www.mail.ru", "vasya", "hgfs" );
-        Connection cn3 = new Connection("www.google.com", "sergey", "lkjg" );
-        Connection cn4 = new Connection("www.tut.by", "lena", "jkhhgf" );
-        Connection cn5 = new Connection("www.github.com", "bill", "ajhgf" );
-
+        Connection cn1 = new Connection("www.gmail.com", "olya", pass1, 1800);
+        Connection cn2 = new Connection("www.mail.ru", "vasya", pass2, 1500);
+        Connection cn3 = new Connection("www.google.com", "sergey", pass3, 1000);
+        Connection cn4 = new Connection("www.tut.by", "lena", pass4, 2000);
+        Connection cn5 = new Connection("www.github.com", "bill", pass5, 5000);
         List<Connection> cns = new ArrayList<>();
+
         cns.add(cn1);
         cns.add(cn2);
         cns.add(cn3);
         cns.add(cn4);
         cns.add(cn5);
 
-        ConnectionPool connectionPool = new ConnectionPool(5);
+        ConnectionPool connectionPool = new ConnectionPool();
         connectionPool.setConnections(cns);
 
-        Connection con1 = connectionPool.getConnection();
-        Connection con2 = connectionPool.getConnection();
-        Connection con3 = connectionPool.getConnection();
-        Connection con4 = connectionPool.getConnection();
-        Connection con5 = connectionPool.getConnection();
 
-        connectionPool.releaseConnection(con5);
-        connectionPool.releaseConnection(con4);
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-        Connection con6 = connectionPool.getConnection();
-        Connection con7 = connectionPool.getConnection();
-//        Connection con8 = connectionPool.getConnection();
-//        Connection con9 = connectionPool.getConnection();
-//        Connection con10 = connectionPool.getConnection();
+        Runnable service1 = () -> {
+            Connection connection1 = connectionPool.getConnection();
+            System.out.println("Using ExecutorService " + connection1.getUrl());
+            pause(1);
+            connectionPool.releaseConnection(connection1);
+            pause(2);
+        };
+
+        Runnable service2 = () -> {
+            Connection connection2 = connectionPool.getConnection();
+            System.out.println("Using ExecutorService " + connection2.getUrl());
+            pause(1);
+            connectionPool.releaseConnection(connection2);
+            pause(2);
+        };
+
+        Runnable service3 = () -> {
+            Connection connection3 = connectionPool.getConnection();
+            System.out.println("Using ExecutorService " + connection3.getUrl());
+            pause(1);
+            connectionPool.releaseConnection(connection3);
+            pause(2);
+        };
+
+        executorService.submit(service1);
+        executorService.submit(service2);
+        executorService.submit(service3);
+        executorService.isShutdown();
+
+        CompletableFuture<Connection> connectionComplFuture1 = CompletableFuture.supplyAsync(() -> {
+            pause(1);
+            Connection conn1 = connectionPool.getConnection();
+            System.out.println("Using CompletableFuture  " + conn1.getUrl());
+            return conn1;
+        });
+        CompletableFuture<Connection> connectionComplFuture2 = CompletableFuture.supplyAsync(() -> {
+            pause(2);
+            Connection conn2 = connectionPool.getConnection();
+            System.out.println("Using CompletableFuture  " + conn2.getUrl());
+            return conn2;
+        });
+        CompletableFuture<Connection> connectionComplFuture3 = CompletableFuture.supplyAsync(() -> {
+            pause(3);
+            Connection conn3 = connectionPool.getConnection();
+            System.out.println("Using CompletableFuture  " + conn3.getUrl());
+            return conn3;
+        });
+        CompletableFuture<Connection> connectionComplFuture4 = CompletableFuture.supplyAsync(() -> {
+            pause(1);
+            Connection conn4 = connectionPool.getConnection();
+            System.out.println("Using CompletableFuture  " + conn4.getUrl());
+            return conn4;
+        });
+        CompletableFuture<Connection> connectionComplFuture5 = CompletableFuture.supplyAsync(() -> {
+            pause(2);
+            Connection conn5 = connectionPool.getConnection();
+            System.out.println("Using CompletableFuture  " + conn5.getUrl());
+            return conn5;
+        });
+        CompletableFuture<Void> connectionCompletableFutures = CompletableFuture.allOf(connectionComplFuture1, connectionComplFuture2, connectionComplFuture3, connectionComplFuture4, connectionComplFuture5);
+
+        connectionCompletableFutures.join();
+        LOGGER.info(connectionComplFuture1.join().getUrl() + " " + connectionComplFuture2.join().getUrl() + " " + connectionComplFuture3.join().getUrl() + " " + connectionComplFuture4.join().getUrl() + " " + connectionComplFuture5.join().getUrl());
+        connectionPool.releaseConnection(connectionComplFuture1.get());
+        connectionPool.releaseConnection(connectionComplFuture2.get());
+        connectionPool.releaseConnection(connectionComplFuture3.get());
+        connectionPool.releaseConnection(connectionComplFuture4.get());
+        connectionPool.releaseConnection(connectionComplFuture5.get());
+        connectionCompletableFutures.cancel(false);
+
+        do {
+            if (connectionPool.isNotEmpty()) {
+                Connection conn = connectionPool.getConnection();
+                new Thread(() -> {
+                    conn.printData();
+                    conn.inputData();
+                    conn.readData();
+                    connectionPool.releaseConnection(conn);
+                }).start();
+            }
+        } while (true);
     }
 
-    private static void pause(int seconds) {
+    public static void pause(int seconds) {
         try {
             Thread.sleep(seconds * 1000);
         } catch (InterruptedException e) {
@@ -387,8 +443,7 @@ public class Main {
         final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         SecureRandom random = new SecureRandom();
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 6; i++)
-        {
+        for (int i = 0; i < 6; i++) {
             int randomIndex = random.nextInt(chars.length());
             sb.append(chars.charAt(randomIndex));
         }
@@ -396,7 +451,3 @@ public class Main {
         return sb.toString();
     }
 }
-
-
-
-

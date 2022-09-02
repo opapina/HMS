@@ -11,20 +11,17 @@ public class ConnectionPool {
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     private static ConnectionPool INSTANCE;
+
+    public ConnectionPool() {
+    }
+
     private List<Connection> connections = new ArrayList<>();
 
-    public ConnectionPool (int maxPoolSize) {
-    }
-
-    public static ConnectionPool getInstance(int maxPoolSize) {
-        if (INSTANCE==null) {
-            INSTANCE = new ConnectionPool(maxPoolSize);
+    public static ConnectionPool getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new ConnectionPool();
         }
         return INSTANCE;
-    }
-
-    public List<Connection> getConnections() {
-        return connections;
     }
 
     public void setConnections(List<Connection> connections) {
@@ -32,8 +29,9 @@ public class ConnectionPool {
     }
 
     public synchronized Connection getConnection() {
+//        if (connections.size() == 0) return null;
         Connection connection = connections.remove(connections.size() - 1);
-        LOGGER.info("successfully connection - " + connection.getUrl() +" username: " + connection.getUsername());
+        LOGGER.info("successfully connected - " + connection.getUrl() + " username: " + connection.getUsername());
         return connection;
     }
 
@@ -41,5 +39,13 @@ public class ConnectionPool {
         connections.add(connection);
         LOGGER.info("close connection - " + connection.getUrl());
         connection = null;
+    }
+
+    public boolean isNotEmpty() {
+        return this.connections.size() > 0;
+    }
+
+    public int getSize() {
+        return this.connections.size();
     }
 }
