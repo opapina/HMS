@@ -44,18 +44,18 @@ public class Connection {
     }
 
     public void printData() {
-        System.out.println("info from " + this.getUrl() + "  before");
+        System.out.println("Start print data from " + this.getUrl());
         try {
             Thread.sleep(delayTime);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("info from " + this.getUrl() + "  after");
+        System.out.println("Finish print data from  " + this.getUrl());
     }
 
     public void inputData() {
         try {
-            System.out.println("Input data on the " + this.getUrl() + "  page");
+            System.out.println("Input data on the page  " + this.getUrl());
             Thread.sleep(delayTime + 1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -64,7 +64,7 @@ public class Connection {
 
     public void readData() {
         try {
-            System.out.println("Read data on the " + this.getUrl() + "  page");
+            System.out.println("Read data on the page  " + this.getUrl());
             Thread.sleep(delayTime + 1500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

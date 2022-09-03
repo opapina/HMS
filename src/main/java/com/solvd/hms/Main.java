@@ -345,7 +345,6 @@ public class Main {
         ConnectionPool connectionPool = new ConnectionPool();
         connectionPool.setConnections(cns);
 
-
         ExecutorService executorService = Executors.newFixedThreadPool(3);
 
         Runnable service1 = () -> {
@@ -380,42 +379,47 @@ public class Main {
         CompletableFuture<Connection> connectionComplFuture1 = CompletableFuture.supplyAsync(() -> {
             pause(1);
             Connection conn1 = connectionPool.getConnection();
+            conn1.readData();
             System.out.println("Using CompletableFuture  " + conn1.getUrl());
+            connectionPool.releaseConnection(conn1);
             return conn1;
         });
         CompletableFuture<Connection> connectionComplFuture2 = CompletableFuture.supplyAsync(() -> {
             pause(2);
             Connection conn2 = connectionPool.getConnection();
+            conn2.inputData();
             System.out.println("Using CompletableFuture  " + conn2.getUrl());
+            connectionPool.releaseConnection(conn2);
             return conn2;
         });
         CompletableFuture<Connection> connectionComplFuture3 = CompletableFuture.supplyAsync(() -> {
             pause(3);
             Connection conn3 = connectionPool.getConnection();
+            conn3.printData();
             System.out.println("Using CompletableFuture  " + conn3.getUrl());
+            connectionPool.releaseConnection(conn3);
             return conn3;
         });
         CompletableFuture<Connection> connectionComplFuture4 = CompletableFuture.supplyAsync(() -> {
             pause(1);
             Connection conn4 = connectionPool.getConnection();
+            conn4.inputData();
             System.out.println("Using CompletableFuture  " + conn4.getUrl());
+            connectionPool.releaseConnection(conn4);
             return conn4;
         });
         CompletableFuture<Connection> connectionComplFuture5 = CompletableFuture.supplyAsync(() -> {
             pause(2);
             Connection conn5 = connectionPool.getConnection();
+            conn5.readData();
             System.out.println("Using CompletableFuture  " + conn5.getUrl());
+            connectionPool.releaseConnection(conn5);
             return conn5;
         });
         CompletableFuture<Void> connectionCompletableFutures = CompletableFuture.allOf(connectionComplFuture1, connectionComplFuture2, connectionComplFuture3, connectionComplFuture4, connectionComplFuture5);
 
         connectionCompletableFutures.join();
         LOGGER.info(connectionComplFuture1.join().getUrl() + " " + connectionComplFuture2.join().getUrl() + " " + connectionComplFuture3.join().getUrl() + " " + connectionComplFuture4.join().getUrl() + " " + connectionComplFuture5.join().getUrl());
-        connectionPool.releaseConnection(connectionComplFuture1.get());
-        connectionPool.releaseConnection(connectionComplFuture2.get());
-        connectionPool.releaseConnection(connectionComplFuture3.get());
-        connectionPool.releaseConnection(connectionComplFuture4.get());
-        connectionPool.releaseConnection(connectionComplFuture5.get());
         connectionCompletableFutures.cancel(false);
 
         do {
