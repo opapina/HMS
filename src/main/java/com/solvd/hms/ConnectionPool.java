@@ -3,6 +3,7 @@ package com.solvd.hms;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +12,12 @@ public class ConnectionPool {
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     private static ConnectionPool INSTANCE;
-
-    public ConnectionPool() {
-    }
-
     private List<Connection> connections = new ArrayList<>();
+    private List<Connection> usedConnections = new ArrayList<>();
+    private Integer maxConnection;
+
+    private ConnectionPool() {
+    }
 
     public static ConnectionPool getInstance() {
         if (INSTANCE == null) {
@@ -24,15 +26,20 @@ public class ConnectionPool {
         return INSTANCE;
     }
 
-    public void setConnections(List<Connection> connections) {
-        this.connections = connections;
-    }
+    public static synchronized List<Connection> getConnection(Integer maxConnection) {
+        List<Connection> connections = new ArrayList<>(maxConnection );
+        for (int i = 0; i < maxConnection; i++) {
+            Connection con = new Connection();
+            LOGGER.info("successfully connected - " + con.getUrl() + " username: " + con.getUsername());
+            connections.add(con);
+        }
 
-    public synchronized Connection getConnection() {
-//        if (connections.size() == 0) return null;
-        Connection connection = connections.remove(connections.size() - 1);
-        LOGGER.info("successfully connected - " + connection.getUrl() + " username: " + connection.getUsername());
-        return connection;
+//        Connection con = connectionPool.remove(connectionPool.size() - 1);
+//        usedConnections.add(connection);
+//        return connection;
+////        if (connections.size() == 0) return null;
+//        connections.remove(connections.size() - 1);
+        return connections;
     }
 
     public void releaseConnection(Connection connection) {

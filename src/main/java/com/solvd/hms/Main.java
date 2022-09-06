@@ -28,7 +28,6 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import static com.solvd.hms.HMSUtils.*;
-//import static org.apache.logging.log4j.core.jmx.Server.executor;
 
 public class Main {
 
@@ -317,122 +316,105 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        CompletableFuture<Void> passwords = CompletableFuture.allOf(password1, password2, password3, password4, password5);
-
-        passwords.join();
-
         String pass1 = password1.join();
         String pass2 = password2.join();
         String pass3 = password3.join();
         String pass4 = password4.join();
         String pass5 = password5.join();
-
         LOGGER.info(pass1 + " " + pass2 + " " + pass3 + " " + pass4 + " " + pass5);
-
-        Connection cn1 = new Connection("www.gmail.com", "olya", pass1, 1800);
-        Connection cn2 = new Connection("www.mail.ru", "vasya", pass2, 1500);
-        Connection cn3 = new Connection("www.google.com", "sergey", pass3, 1000);
-        Connection cn4 = new Connection("www.tut.by", "lena", pass4, 2000);
-        Connection cn5 = new Connection("www.github.com", "bill", pass5, 5000);
-        List<Connection> cns = new ArrayList<>();
-
-        cns.add(cn1);
-        cns.add(cn2);
-        cns.add(cn3);
-        cns.add(cn4);
-        cns.add(cn5);
-
-        ConnectionPool connectionPool = new ConnectionPool();
-        connectionPool.setConnections(cns);
 
         ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-        Runnable service1 = () -> {
-            Connection connection1 = connectionPool.getConnection();
-            System.out.println("Using ExecutorService " + connection1.getUrl());
-            pause(1);
-            connectionPool.releaseConnection(connection1);
-            pause(2);
-        };
-
-        Runnable service2 = () -> {
-            Connection connection2 = connectionPool.getConnection();
-            System.out.println("Using ExecutorService " + connection2.getUrl());
-            pause(1);
-            connectionPool.releaseConnection(connection2);
-            pause(2);
-        };
-
-        Runnable service3 = () -> {
-            Connection connection3 = connectionPool.getConnection();
-            System.out.println("Using ExecutorService " + connection3.getUrl());
-            pause(1);
-            connectionPool.releaseConnection(connection3);
-            pause(2);
-        };
-
-        executorService.submit(service1);
-        executorService.submit(service2);
-        executorService.submit(service3);
-        executorService.isShutdown();
-
         CompletableFuture<Connection> connectionComplFuture1 = CompletableFuture.supplyAsync(() -> {
-            pause(1);
-            Connection conn1 = connectionPool.getConnection();
-            conn1.readData();
-            System.out.println("Using CompletableFuture  " + conn1.getUrl());
-            connectionPool.releaseConnection(conn1);
-            return conn1;
-        });
+            Connection con1 = new Connection();
+            con1.inputData();
+            LOGGER.info("connectionComplFuture1 " + con1 + " using ExecutorService");
+            pause(2);
+            return con1;
+        }, executorService);
+
         CompletableFuture<Connection> connectionComplFuture2 = CompletableFuture.supplyAsync(() -> {
-            pause(2);
-            Connection conn2 = connectionPool.getConnection();
-            conn2.inputData();
-            System.out.println("Using CompletableFuture  " + conn2.getUrl());
-            connectionPool.releaseConnection(conn2);
-            return conn2;
-        });
-        CompletableFuture<Connection> connectionComplFuture3 = CompletableFuture.supplyAsync(() -> {
-            pause(3);
-            Connection conn3 = connectionPool.getConnection();
-            conn3.printData();
-            System.out.println("Using CompletableFuture  " + conn3.getUrl());
-            connectionPool.releaseConnection(conn3);
-            return conn3;
-        });
-        CompletableFuture<Connection> connectionComplFuture4 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            LOGGER.info("connectionComplFuture2 " + con1 + " using ExecutorService");
+            con1.readData();
             pause(1);
-            Connection conn4 = connectionPool.getConnection();
-            conn4.inputData();
-            System.out.println("Using CompletableFuture  " + conn4.getUrl());
-            connectionPool.releaseConnection(conn4);
-            return conn4;
-        });
-        CompletableFuture<Connection> connectionComplFuture5 = CompletableFuture.supplyAsync(() -> {
+            return con1;
+        }, executorService);
+
+        CompletableFuture<Connection> connectionComplFuture3 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            LOGGER.info("connectionComplFuture1 " + con1 + " using ExecutorService");
+            con1.printData();
             pause(2);
-            Connection conn5 = connectionPool.getConnection();
-            conn5.readData();
-            System.out.println("Using CompletableFuture  " + conn5.getUrl());
-            connectionPool.releaseConnection(conn5);
-            return conn5;
-        });
+            return con1;
+        }, executorService);
+
+        CompletableFuture<Connection> connectionComplFuture4 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            LOGGER.info("connectionComplFuture1 " + con1 + " using ExecutorService");
+            con1.readData();
+            pause(2);
+            return con1;
+        }, executorService);
+
+        CompletableFuture<Connection> connectionComplFuture5 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            LOGGER.info("connectionComplFuture1 " + con1 + " using ExecutorService");
+            con1.printData();
+            pause(2);
+            return con1;
+        }, executorService);
+
         CompletableFuture<Void> connectionCompletableFutures = CompletableFuture.allOf(connectionComplFuture1, connectionComplFuture2, connectionComplFuture3, connectionComplFuture4, connectionComplFuture5);
 
         connectionCompletableFutures.join();
         LOGGER.info(connectionComplFuture1.join().getUrl() + " " + connectionComplFuture2.join().getUrl() + " " + connectionComplFuture3.join().getUrl() + " " + connectionComplFuture4.join().getUrl() + " " + connectionComplFuture5.join().getUrl());
         connectionCompletableFutures.cancel(false);
 
-        do {
-            if (connectionPool.isNotEmpty()) {
-                Connection conn = connectionPool.getConnection();
-                new Thread(() -> {
-                    conn.printData();
-                    conn.inputData();
-                    conn.readData();
-                    connectionPool.releaseConnection(conn);
-                }).start();
-            }
-        } while (true);
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.readData());
+        }).start();
+
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.printData());
+        }).start();
+
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.inputData());
+        }).start();
+
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.printData());
+        }).start();
+
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.readData());
+        }).start();
+
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.printData());
+        }).start();
+
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.inputData());
+        }).start();
+
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.printData());
+        }).start();
+
+        new Thread(() -> {
+            List<Connection> usedCon = ConnectionPool.getConnection(5);
+            usedCon.forEach(us -> us.readData());
+        }).start();
     }
 
     public static void pause(int seconds) {

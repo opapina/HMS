@@ -1,18 +1,22 @@
 package com.solvd.hms;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.security.SecureRandom;
+
 public class Connection {
+
+    private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     private String url;
     private String username;
     private String password;
 
-    private final int delayTime;
-
-    public Connection(String url, String username, String password, int delayTime) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
-        this.delayTime = delayTime;
+    public Connection() {
+        this.url = wordRandom();
+        this.username = wordRandom();
+        this.password = wordRandom();
     }
 
     public String getUrl() {
@@ -39,24 +43,20 @@ public class Connection {
         this.password = password;
     }
 
-    public int getDelayTime() {
-        return delayTime;
-    }
-
     public void printData() {
-        System.out.println("Start print data from " + this.getUrl());
+        LOGGER.info("Start print data from " + this.getUrl());
         try {
-            Thread.sleep(delayTime);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Finish print data from  " + this.getUrl());
+        LOGGER.info("Finish print data from  " + this.getUrl());
     }
 
     public void inputData() {
         try {
-            System.out.println("Input data on the page  " + this.getUrl());
-            Thread.sleep(delayTime + 1000);
+            LOGGER.info("Input data on the page  " + this.getUrl());
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -64,10 +64,21 @@ public class Connection {
 
     public void readData() {
         try {
-            System.out.println("Read data on the page  " + this.getUrl());
-            Thread.sleep(delayTime + 1500);
+            LOGGER.info("Read data on the page  " + this.getUrl());
+            Thread.sleep(1500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String wordRandom() {
+        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            int randomIndex = random.nextInt(chars.length());
+            sb.append(chars.charAt(randomIndex));
+        }
+        return sb.toString();
     }
 }
