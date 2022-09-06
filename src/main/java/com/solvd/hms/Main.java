@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 import static com.solvd.hms.HMSUtils.*;
 
@@ -243,6 +244,20 @@ public class Main {
         LOGGER.info(isEvenNumber.test(5));
         greeter.accept(welderKolya.getFirstName(), welderKolya.getLastName());
         LOGGER.info(namer.apply(cleanerPetya.getFirstName(), cleanerPetya.getLastName()));
+
+        clients.stream()
+                .peek(c -> c.getChildren())
+                .forEach(ch -> LOGGER.info(ch));
+        workers.stream()
+                .filter(worker -> worker.getProfession().equals("piper"))
+                .forEach(p -> LOGGER.info(p));
+        workers.stream()
+                .peek(w -> w.getChildren())
+                .collect(Collectors.toList());
+        clients.stream()
+                .map(Client::getApartment)
+                .flatMap(f->f.stream())
+                .collect(Collectors.toList());
 
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
             orders.stream()
