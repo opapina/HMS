@@ -43,8 +43,7 @@ public class Main {
         clients.add(mrPupsik);
         clients.add(mrKozlov);
 
-        clients.stream()
-                .forEach(c -> LOGGER.info(c.toString()));
+        clients.forEach(c -> LOGGER.info(c.toString()));
 
         Worker piperVasia;
         try {
@@ -67,8 +66,8 @@ public class Main {
         workers.add(welderKolya);
         workers.add(welderVanya);
 
-        workers.stream()
-                .forEach(worker -> LOGGER.info(worker.getFirstName() + " " + worker.getLastName() + " is a " + worker.getProfession()));
+        workers.forEach(worker -> LOGGER.info(worker.getFirstName() + " " + worker.getLastName() + " is a " + worker.getProfession()));
+        workers.forEach(worker -> LOGGER.info(worker));
 
         Address pervomaiskay = new Address("Pervomaiskay");
         Address zaharova = new Address("Zaharova");
@@ -83,8 +82,7 @@ public class Main {
         addresses.add(frunze);
         addresses.add(chapaeva);
 
-        addresses.stream()
-                .forEach(address -> LOGGER.info(address.getStreet()));
+        addresses.forEach(address -> LOGGER.info(address.getStreet()));
 
         Map<String, Address> map = new HashMap<>();
         map.put("First quarter", zaharova);
@@ -97,8 +95,7 @@ public class Main {
         map.put("First quarter", chapaeva);
         map.put("Seventh quarter", zaharova);
 
-        map.keySet().stream()
-                .forEach(key -> LOGGER.info(key + ":" + map.get(key)));
+        map.keySet().forEach(key -> LOGGER.info(key + ":" + map.get(key)));
 
         map.keySet().stream()
                 .filter(m -> map.get(m).equals(frunze))
@@ -119,8 +116,7 @@ public class Main {
         services.add(streetGR1);
         services.add(streetGR2);
 
-        services.stream()
-                .forEach(service -> LOGGER.info(service.getType()));
+        services.forEach(service -> LOGGER.info(service.getType()));
 
         Order<Equipment> order1 = new Order<>(1, Service.Type.CLEANING, new Address("Chapaeva", 25, 70));
         Order<Equipment> order2 = new Order<>(2, Service.Type.GARBAGEREMOVAL, new Address("Kozlova", 50, 45));
@@ -131,8 +127,7 @@ public class Main {
         orders.add(order2);
         orders.add(order3);
 
-        orders.stream()
-                .forEach(order -> LOGGER.info(order));
+        orders.forEach(order -> LOGGER.info(order));
 
         IDo iDo1 = new Worker("Zhenya", "Ivanov", LocalDate.of(1982, 1, 1), "piper", 17);
         IDo iDo2 = new Client<Apartment, Car>("Nikolay", "Bubnov", LocalDate.of(1999, 3, 5), List.of(new Apartment(3, 100, new Address("Nezavisimosti", 15, 4))));
@@ -245,19 +240,24 @@ public class Main {
         greeter.accept(welderKolya.getFirstName(), welderKolya.getLastName());
         LOGGER.info(namer.apply(cleanerPetya.getFirstName(), cleanerPetya.getLastName()));
 
-        clients.stream()
-                .peek(c -> c.getChildren())
-                .forEach(ch -> LOGGER.info(ch));
-        workers.stream()
-                .filter(worker -> worker.getProfession().equals("piper"))
-                .forEach(p -> LOGGER.info(p));
-        workers.stream()
-                .peek(w -> w.getChildren())
+        List<Worker> newWorkers = workers.stream()
+                .filter(worker -> (worker.getSalaryPerMonth()==null))
+                .peek(address -> address.setSalaryPerMonth(BigDecimal.valueOf(1578.65)))
                 .collect(Collectors.toList());
-        clients.stream()
+
+        newWorkers.forEach(worker -> LOGGER.info(worker));
+
+        workers.stream()
+                .filter(worker -> "piper".equals(worker.getProfession()))
+                .forEach(worker -> LOGGER.info(worker));
+        workers.stream()
+                .peek(worker-> worker.getChildren())
+                .collect(Collectors.toList());
+        List<Apartment> apartmentsOfClients = clients.stream()
                 .map(Client::getApartment)
-                .flatMap(f->f.stream())
+                .flatMap(apartment -> apartment.stream())
                 .collect(Collectors.toList());
+        apartmentsOfClients.forEach(apartment -> LOGGER.info(apartment));
 
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
             orders.stream()
@@ -267,6 +267,11 @@ public class Main {
                     .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 0)
                     .map(Order::getId).forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
         }
+
+        doSay(sayer);
+    }
+    public static void doSay (Consumer smth) {
+        smth.accept("Good buy!");
     }
 }
 
