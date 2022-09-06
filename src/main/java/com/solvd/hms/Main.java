@@ -269,9 +269,19 @@ public class Main {
         }
 
         doSay(sayer);
+        count(12,13, isEvenNumber);
     }
     public static void doSay (Consumer smth) {
         smth.accept("Good buy!");
+    }
+
+    public static int count(int val1, int val2, Predicate toTwo) {
+        int val = 0;
+        if(toTwo.test(val1+val2)) {
+            val = (val1 + val2) / 2;
+        } else val = (val1 + val2 - 1)/2;
+        LOGGER.info(val);
+        return val;
     }
 }
 
