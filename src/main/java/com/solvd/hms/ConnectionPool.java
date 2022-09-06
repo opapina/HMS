@@ -3,7 +3,6 @@ package com.solvd.hms;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +11,8 @@ public class ConnectionPool {
     private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     private static ConnectionPool INSTANCE;
-    private List<Connection> connections = new ArrayList<>();
-    private List<Connection> usedConnections = new ArrayList<>();
+    private static List<Connection> connections;
+    private static List<Connection> usedConnections = new ArrayList<>();
     private Integer maxConnection;
 
     private ConnectionPool() {
@@ -26,26 +25,25 @@ public class ConnectionPool {
         return INSTANCE;
     }
 
-    public static synchronized List<Connection> getConnection(Integer maxConnection) {
+    public static synchronized Connection getConnection(Integer maxConnection) throws InterruptedException {
         List<Connection> connections = new ArrayList<>(maxConnection );
-        for (int i = 0; i < maxConnection; i++) {
+        for(int i = 0; i < maxConnection; i++) {
             Connection con = new Connection();
             LOGGER.info("successfully connected - " + con.getUrl() + " username: " + con.getUsername());
             connections.add(con);
         }
-
-//        Connection con = connectionPool.remove(connectionPool.size() - 1);
-//        usedConnections.add(connection);
-//        return connection;
-////        if (connections.size() == 0) return null;
-//        connections.remove(connections.size() - 1);
-        return connections;
+        if ((connections.size() == 0)) Thread.sleep(4000);
+        Connection connection = connections.remove(connections.size() - 1);
+        List<Connection> usedConnections = new ArrayList<>();
+        usedConnections.add(connection);
+        return connection;
     }
 
-    public void releaseConnection(Connection connection) {
+    public static void releaseConnection(Connection connection) throws InterruptedException {
+        if ((connections.size() == 0)) Thread.sleep(4000);
         connections.add(connection);
         LOGGER.info("close connection - " + connection.getUrl());
-        connection = null;
+        usedConnections.remove(connection);
     }
 
     public boolean isNotEmpty() {

@@ -372,48 +372,102 @@ public class Main {
         connectionCompletableFutures.cancel(false);
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.readData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.readData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.printData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.printData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.inputData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.inputData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.printData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.printData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.readData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.readData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.printData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.printData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.inputData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.inputData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.printData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.printData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
 
         new Thread(() -> {
-            List<Connection> usedCon = ConnectionPool.getConnection(5);
-            usedCon.forEach(us -> us.readData());
+            Connection usedCon = null;
+            try {
+                usedCon = ConnectionPool.getConnection(5);
+                usedCon.readData();
+                ConnectionPool.releaseConnection(usedCon);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }).start();
     }
 
