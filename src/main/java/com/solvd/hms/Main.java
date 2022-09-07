@@ -262,10 +262,12 @@ public class Main {
         try (HMS partizanskiHMS = new HMS("PartizanskiHMS", 34, new Address("Rumyanceva", 37, 2), addresses, services)) {
             orders.stream()
                     .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 1)
-                    .map(Order::getId).forEach(t -> LOGGER.info(t + "  number of orders can be done"));
+                    .map(Order::getId)
+                    .forEach(t -> LOGGER.info(t + "  number of orders can be done"));
             orders.stream()
                     .filter(order -> HMSUtils.checkService(order, partizanskiHMS) == 0)
-                    .map(Order::getId).forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
+                    .map(Order::getId)
+                    .forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
         }
 
         doSay(sayer);
@@ -277,10 +279,9 @@ public class Main {
     }
 
     public static int calculate(int val1, int val2, Predicate<Integer> toTwo) {
-        int val = 0;
-        if(toTwo.test(val1+val2)) {
-            val = (val1 + val2) / 2;
-        } else val = (val1 + val2 - 1)/2;
+        int val = toTwo.test(val1 + val2)
+                ? (val1 + val2) / 2
+                : (val1 + val2 - 1) / 2;
         LOGGER.info(val);
         return val;
     }
