@@ -371,11 +371,12 @@ public class Main {
         LOGGER.info(connectionComplFuture1.join().getUrl() + " " + connectionComplFuture2.join().getUrl() + " " + connectionComplFuture3.join().getUrl() + " " + connectionComplFuture4.join().getUrl() + " " + connectionComplFuture5.join().getUrl());
         connectionCompletableFutures.cancel(false);
 
+        ConnectionPool.getInstance(5);
+
         new Thread(() -> {
-            Connection usedCon = null;
-            try {
-                usedCon = ConnectionPool.getConnection(5);
+            Connection usedCon = ConnectionPool.getConnection();
                 usedCon.readData();
+            try {
                 ConnectionPool.releaseConnection(usedCon);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -383,92 +384,29 @@ public class Main {
         }).start();
 
         new Thread(() -> {
-            Connection usedCon = null;
+            Connection usedCon = ConnectionPool.getConnection();
+            usedCon.printData();
             try {
-                usedCon = ConnectionPool.getConnection(5);
-                usedCon.printData();
                 ConnectionPool.releaseConnection(usedCon);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }).start();
 
-        new Thread(() -> {
-            Connection usedCon = null;
-            try {
-                usedCon = ConnectionPool.getConnection(5);
-                usedCon.inputData();
-                ConnectionPool.releaseConnection(usedCon);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
 
-        new Thread(() -> {
-            Connection usedCon = null;
-            try {
-                usedCon = ConnectionPool.getConnection(5);
-                usedCon.printData();
-                ConnectionPool.releaseConnection(usedCon);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        do {
+            if (ConnectionPool.isNotEmpty()) {
+                new Thread(() -> {
+                    try {
+                        Connection usedCon = ConnectionPool.getConnection();
+                        usedCon.readData();
+                        ConnectionPool.releaseConnection(usedCon);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
             }
-        }).start();
-
-        new Thread(() -> {
-            Connection usedCon = null;
-            try {
-                usedCon = ConnectionPool.getConnection(5);
-                usedCon.readData();
-                ConnectionPool.releaseConnection(usedCon);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
-
-        new Thread(() -> {
-            Connection usedCon = null;
-            try {
-                usedCon = ConnectionPool.getConnection(5);
-                usedCon.printData();
-                ConnectionPool.releaseConnection(usedCon);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
-
-        new Thread(() -> {
-            Connection usedCon = null;
-            try {
-                usedCon = ConnectionPool.getConnection(5);
-                usedCon.inputData();
-                ConnectionPool.releaseConnection(usedCon);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
-
-        new Thread(() -> {
-            Connection usedCon = null;
-            try {
-                usedCon = ConnectionPool.getConnection(5);
-                usedCon.printData();
-                ConnectionPool.releaseConnection(usedCon);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
-
-        new Thread(() -> {
-            Connection usedCon = null;
-            try {
-                usedCon = ConnectionPool.getConnection(5);
-                usedCon.readData();
-                ConnectionPool.releaseConnection(usedCon);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+        } while(true);
     }
 
     public static void pause(int seconds) {
