@@ -16,8 +16,9 @@ public class Client<A, V> extends Human implements IDrive, IDo {
     private List<V> vehicles;
     private List<Child> children;
 
-    public Client(String firstName, String lastName, LocalDate dob, List<Apartment> apartments) {
+    public Client(String firstName, String lastName, LocalDate dob, List<A> apartments) {
         super(firstName, lastName, dob);
+        this.apartments = apartments;
     }
 
     public void ask() {
@@ -74,9 +75,12 @@ public class Client<A, V> extends Human implements IDrive, IDo {
 
     @Override
     public String toString() {
-        return "Client{" + "apartments=" + apartments + ", vehicles=" + vehicles + ", children=" + children + "} " + super.toString();
+        return "Client{" +
+                "apartments=" + apartments +
+                ", vehicles=" + vehicles +
+                ", children=" + children +
+                "} " + super.toString();
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
