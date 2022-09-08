@@ -81,13 +81,6 @@ public class Client<A, V> extends Human implements IDrive, IDo {
                 ", children=" + children +
                 "} " + super.toString();
     }
-
-    //    @Override
-//    public String toString() {
-//        return "Client{" + "apartments=" + apartments + ", vehicles=" + vehicles + ", children=" + children + "} " + super.toString();
-//    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
