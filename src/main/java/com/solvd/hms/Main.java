@@ -21,8 +21,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
@@ -269,6 +271,166 @@ public class Main {
                     .map(Order::getId)
                     .forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
         }
+
+
+        MyThread myThread1 = new MyThread();
+        myThread1.start();
+        LOGGER.info("New " + myThread1 + "thread was started");
+        MyThread myThread2 = new MyThread();
+        myThread2.start();
+        LOGGER.info("New " + myThread2 + "thread was started");
+        new Thread(() -> {
+            LOGGER.info("using runnable 1");
+        }).start();
+
+        new Thread(() -> {
+            LOGGER.info("using runnable 2");
+        }).start();
+
+        CompletableFuture<String> password1 = CompletableFuture.supplyAsync(() -> {
+            pause(3);
+            return passwordRandom();
+        });
+        try {
+            password1.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+
+        CompletableFuture<String> password2 = CompletableFuture.supplyAsync(() -> {
+            pause(2);
+            return passwordRandom();
+        });
+        try {
+            password2.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+        CompletableFuture<String> password3 = CompletableFuture.supplyAsync(() -> {
+            pause(1);
+            return passwordRandom();
+        });
+        try {
+            password3.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+        CompletableFuture<String> password4 = CompletableFuture.supplyAsync(() -> {
+            pause(1);
+            return passwordRandom();
+        });
+        try {
+            password4.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+        CompletableFuture<String> password5 = CompletableFuture.supplyAsync(() -> {
+            pause(4);
+            return passwordRandom();
+        });
+        try {
+            password5.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+
+        String pass1 = password1.join();
+        String pass2 = password2.join();
+        String pass3 = password3.join();
+        String pass4 = password4.join();
+        String pass5 = password5.join();
+        LOGGER.info(pass1 + " " + pass2 + " " + pass3 + " " + pass4 + " " + pass5);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+
+        CompletableFuture<Connection> connectionComplFuture1 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            con1.inputData();
+            LOGGER.info("connectionComplFuture1 " + con1 + " using ExecutorService");
+            pause(2);
+            return con1;
+        }, executorService);
+
+        CompletableFuture<Connection> connectionComplFuture2 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            LOGGER.info("connectionComplFuture2 " + con1 + " using ExecutorService");
+            con1.readData();
+            pause(1);
+            return con1;
+        }, executorService);
+
+        CompletableFuture<Connection> connectionComplFuture3 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            LOGGER.info("connectionComplFuture1 " + con1 + " using ExecutorService");
+            con1.printData();
+            pause(2);
+            return con1;
+        }, executorService);
+
+        CompletableFuture<Connection> connectionComplFuture4 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            LOGGER.info("connectionComplFuture1 " + con1 + " using ExecutorService");
+            con1.readData();
+            pause(2);
+            return con1;
+        }, executorService);
+
+        CompletableFuture<Connection> connectionComplFuture5 = CompletableFuture.supplyAsync(() -> {
+            Connection con1 = new Connection();
+            LOGGER.info("connectionComplFuture1 " + con1 + " using ExecutorService");
+            con1.printData();
+            pause(2);
+            return con1;
+        }, executorService);
+
+        CompletableFuture<Void> connectionCompletableFutures = CompletableFuture.allOf(connectionComplFuture1, connectionComplFuture2, connectionComplFuture3, connectionComplFuture4, connectionComplFuture5);
+
+        connectionCompletableFutures.join();
+        LOGGER.info(connectionComplFuture1.join().getUrl() + " " + connectionComplFuture2.join().getUrl() + " " + connectionComplFuture3.join().getUrl() + " " + connectionComplFuture4.join().getUrl() + " " + connectionComplFuture5.join().getUrl());
+        connectionCompletableFutures.cancel(false);
+
+        ConnectionPool connectionPool = ConnectionPool.getInstance(5);
+
+        new Thread(() -> {
+            Connection usedCon = connectionPool.getConnection();
+            usedCon.printData();
+            connectionPool.releaseConnection(usedCon);
+        }).start();
+
+        new Thread(() -> {
+            Connection usedCon = connectionPool.getConnection();
+            usedCon.inputData();
+            connectionPool.releaseConnection(usedCon);
+        }).start();
+
+        do {
+            Connection usedCon = connectionPool.getConnection();
+            new Thread(() -> {
+                pause(1);
+                usedCon.readData();
+                connectionPool.releaseConnection(usedCon);
+            }).start();
+    } while(true);
+}
+
+    public static void pause(int seconds) {
+        try {
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String passwordRandom() {
+        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            int randomIndex = random.nextInt(chars.length());
+            sb.append(chars.charAt(randomIndex));
+        }
+        LOGGER.info("Password was created: " + sb);
+        return sb.toString();
 
         doSay(sayer);
         calculate(12,13, isEvenNumber);
