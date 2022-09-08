@@ -6,7 +6,7 @@
 
     <groupId>com.solvd</groupId>
     <artifactId>hms</artifactId>
-    <version>10.0.1-SNAPSHOT</version>
+    <version>10.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>

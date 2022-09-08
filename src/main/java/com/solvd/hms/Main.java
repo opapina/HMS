@@ -372,43 +372,28 @@ public class Main {
         connectionCompletableFutures.cancel(false);
 
         ConnectionPool connectionPool = ConnectionPool.getInstance(5);
-//
-//        new Thread(() -> {
-//            Connection usedCon = connectionPool.getConnection();
-//            usedCon.readData();
-//            try {
-//                connectionPool.releaseConnection(usedCon);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }).start();
-//
-//        new Thread(() -> {
-//            Connection usedCon = connectionPool.getConnection();
-//            usedCon.printData();
-//            try {
-//                connectionPool.releaseConnection(usedCon);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }).start();
 
+        new Thread(() -> {
+            Connection usedCon = connectionPool.getConnection();
+            usedCon.printData();
+            connectionPool.releaseConnection(usedCon);
+        }).start();
+
+        new Thread(() -> {
+            Connection usedCon = connectionPool.getConnection();
+            usedCon.inputData();
+            connectionPool.releaseConnection(usedCon);
+        }).start();
 
         do {
-            if (!ConnectionPool.isNotEmpty()) {
-            } else {
-                new Thread(() -> {
-                    Connection usedCon = connectionPool.getConnection();
-                    usedCon.readData();
-                    try {
-                        connectionPool.releaseConnection(usedCon);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
-            }
-        } while(true);
-    }
+            Connection usedCon = connectionPool.getConnection();
+            new Thread(() -> {
+                pause(1);
+                usedCon.readData();
+                connectionPool.releaseConnection(usedCon);
+            }).start();
+    } while(true);
+}
 
     public static void pause(int seconds) {
         try {
