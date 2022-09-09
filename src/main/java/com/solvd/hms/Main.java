@@ -243,7 +243,7 @@ public class Main {
         LOGGER.info(namer.apply(cleanerPetya.getFirstName(), cleanerPetya.getLastName()));
 
         List<Worker> newWorkers = workers.stream()
-                .filter(worker -> (worker.getSalaryPerMonth()==null))
+                .filter(worker -> (worker.getSalaryPerMonth() == null))
                 .peek(address -> address.setSalaryPerMonth(BigDecimal.valueOf(1578.65)))
                 .collect(Collectors.toList());
 
@@ -253,7 +253,7 @@ public class Main {
                 .filter(worker -> "piper".equals(worker.getProfession()))
                 .forEach(worker -> LOGGER.info(worker));
         workers.stream()
-                .peek(worker-> worker.getChildren())
+                .peek(worker -> worker.getChildren())
                 .collect(Collectors.toList());
         List<Apartment> apartmentsOfClients = clients.stream()
                 .map(Client::getApartment)
@@ -272,6 +272,8 @@ public class Main {
                     .forEach(t -> LOGGER.info(t + "  number of orders can't be done"));
         }
 
+        doSay(sayer);
+        calculate(12, 13, isEvenNumber);
 
         MyThread myThread1 = new MyThread();
         myThread1.start();
@@ -410,8 +412,8 @@ public class Main {
                 usedCon.readData();
                 connectionPool.releaseConnection(usedCon);
             }).start();
-    } while(true);
-}
+        } while (true);
+    }
 
     public static void pause(int seconds) {
         try {
@@ -431,12 +433,9 @@ public class Main {
         }
         LOGGER.info("Password was created: " + sb);
         return sb.toString();
-
-        doSay(sayer);
-        calculate(12,13, isEvenNumber);
     }
 
-    public static void doSay (Consumer<String> smth) {
+    public static void doSay(Consumer<String> smth) {
         smth.accept("Good buy!");
     }
 
